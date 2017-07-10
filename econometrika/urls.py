@@ -20,6 +20,6 @@ from analysis import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^analysis/', include('analysis.urls')),
-    url(r'^$', views.index),
+    url(r'^$', views.non_normal_stock_returns, name='index'),
     #url(r'^pages/', include('django.contrib.flatpages.urls')),
 ]
