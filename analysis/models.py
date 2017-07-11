@@ -26,3 +26,14 @@ class StockQuote(models.Model):
     class Meta:
         unique_together = ('symbol', 'date')
 
+class Lang(models.Model):
+    code = models.CharField(max_length=2, primary_key=True)
+    name = models.CharField(max_length=32)
+
+class Plot(models.Model):
+    slug = models.CharField(max_length=64)
+    title = models.CharField(max_length=64)
+    html_above = models.TextField(blank=True)
+    lang_code = models.ForeignKey(Lang, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('lang_code', 'slug')
