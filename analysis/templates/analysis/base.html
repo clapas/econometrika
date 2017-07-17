@@ -20,7 +20,7 @@
     <style>
       body {
         font-family: "Computer Modern Concrete";
-        font-size: 18px;
+        font-size: 16px;
       }
     </style>
 
@@ -34,7 +34,7 @@
   <body>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-static-top">
-      <div class="container">
+      <div class="{% if container_fluid %}container-fluid{% else %}container{% endif %}">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -51,6 +51,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Análisis <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'non_normal_stock_returns' %}">Los retornos de la bolsa no son normales</a></li>
+                <li><a href="{% url 'stock_returns_tolerance_limits' %}">Límites de tolerancia del retorno bursátil</a></li>
               </ul>
             </li>
             <li class="dropdown {% if plot_page %}active{% endif %}">
@@ -64,13 +65,15 @@
             <!--<li><a href="#">Materias primas</a></li>
             <li><a href="#">Empresas</a></li>-->
           </ul>
+          <!--
           <ul class="nav navbar-nav navbar-right">
             <li class="active"><a href="./">Español <span class="caret"></span><span class="sr-only">(current)</span></a></li>
           </ul>
+          -->
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-    <div class="container">
+    <div class="{% if container_fluid %}container-fluid{% else %}container{% endif %}">
       <div>
         {% if debug %}
           <div style="width: 100%; height: 90px; background: olive">Advertising</div>
@@ -92,6 +95,11 @@
     <footer class="text-center">
       <h1 class="econometrika">econometrika</h1>
       Copyright © {{ request.META.HTTP_HOST }} ({% now 'Y' %})
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <p class="disclaimer"><small>Descargo de responsabilidad: {{ request.META.HTTP_HOST }} no está operado por agentes, distribuidores o asesores de inversión. Bajo ninguna circunstancia la información publicada en {{ request.META.HTTP_HOST }} representa una recomendación de compra o venta de cualquier valor. La información en este sitio y sus grupos de noticias, no pretende ser ni constituye asesoramiento ni recomendación de inversión. En ningún caso, {{ request.META.HTTP_HOST }} será responsable frente a miembros, visitantes o terceros, for daños de cualquier tipo resultado del uso del contenido o materiales publicados o disponibles en {{ request.META.HTTP_HOST }}, o relacionado con el uso o la inhabilidad de usar {{ request.META.HTTP_HOST }} o sus contenidos, incluyendo, sin limitación, cualquier minusvalía, pérdida de beneficios u oportunidades, y perjuicio especial, fortuito, indirecto o consiguiente. Asímismo, no se garantiza la completitud, precisión o cualquier otro aspecto de la información en este sitio.</small></p>
+        </div>
+      </div>
     </footer>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

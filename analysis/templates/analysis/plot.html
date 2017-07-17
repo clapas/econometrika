@@ -1,10 +1,8 @@
 {% extends 'analysis/base.html' %}
 {% block content %}
-  <div class="container">
+  <div class="container-fluid">
     <h1 class="page-header">{% block title %}{{ title }}{% endblock %}</h1>
     {{ html_above | safe }}
-  </div>
-  <div class="container-fluid">
     <div class="plotly-loading" style="width: 100%; height: 800px">
       <div class="plotlybars-wrapper">
         <div class="plotlybars">
@@ -24,5 +22,5 @@
     <iframe srcdoc="{{ srcdoc }}" width="100%" height="800px" frameborder="0" seamless scrolling="no"></iframe>
   </div>
   <!--<script src="https://github.com/jugglinmike/srcdoc-polyfill/raw/v1.0.0/srcdoc-polyfill.min.js"></script>-->
-  <script src="https://assets.pagecloud.com/javascripts/vendor/srcdoc-polyfill.50aaf56fd9a3.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jugglinmike/srcdoc-polyfill/srcdoc-polyfill.min.js"></script>
 {% endblock %}

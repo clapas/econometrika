@@ -94,3 +94,12 @@ footer {
   background-color: #efefef;
   border-top: #d0d0d0;
 }
+
+.disclaimer {
+  margin-top: 18px;
+  line-height: 0.85em;
+}
+
+.disclaimer small {
+  font-size: 0.75em;
+}

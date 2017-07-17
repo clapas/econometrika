@@ -1,0 +1,85 @@
+{% extends 'analysis/base.html' %}
+{% load static %}
+{% block canonical_url %}{% url 'non_normal_stock_returns' %}{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="page-header">
+      <small class="authorship"><span class="glyphicon glyphicon-user"></span> Claudio Pascual</small>
+      <h1>{% block title %}Límites de tolerancia del retorno bursátil{% endblock %}</h1>
+    </div>
+    <p>Conocer una distribución de probabilidad permite afinar más en la realización de inferencias que si ésta es desconocida pero, a menudo, la asunción de una determinada distribución es arriesgado, pues puede llevarnos a resultados precisos pero del todo incorrectos. Esto es lo que le ha sucedido a muchos que trataron los retornos bursátiles como distribuciones normales, tal y como se expone en el análisis <a href="{% url 'non_normal_stock_returns' %}">Los retornos de la bolsa no son normales</a>.</p>
+    <p>Por fortuna para nosotros, hay herramientas que permiten realizar inferencias sin asumir una distribución concreta: se ha demostrado que la proporción de valores $D$ que se encuentran entre dos límites dados por valores simétricos de una muestra &mdash;por ejemplo el primero y el último&ndash; tiene una distribución beta, <strong>sin importar la forma de la función de densidad de probabilidad</strong></p>
+    <p>La afirmación anterior es muy fuerte, pues permite determinar los límites estadísticos de tolerancia sin necesidad de especificar la distribución de la variable aleatoria de interés, en nuestro caso la tasa de cambio en el retorno bursátil.</p>
+    <h2>Proporción de valores entre la caída máxima y la subida máxima del IBEX 35</h2>
+    <p>A <mark>{{ gen_date|date }}</mark>, la máxima caída diaria, del <mark>{{ ibex35_max_drop }}</mark>%, se ha producido el <mark>{{ ibex35_max_drop_date|date }}</mark>, y la máxima subida diaria, del <mark>{{ ibex35_max_gain }}</mark>%, se ha producido el <mark>{{ ibex35_max_gain_date|date }}</mark>. Vamos a estudiar tanto los límites de tolerancia bilaterales, es decir, la probabilidad $\gamma$ de que el $D\%$ de todos los posibles retornos de la bolsa se encuentren entre la caída máxima y la subida máxima, como los límites unilaterales inferiores, es decir, la probabilidad de que se dé una caída superior a la máxima registrada hasta ahora.</p>
+    <a target="_blank" href="{% url 'plot' 'ibex35-daily-rate' %}"><img src="{% static 'analysis/ibex35-daily-rate.png' %}" width="100%"></a>
+    <p>La muestra a utilizar es la de todos los retornos diarios desde el 5 de enero de 1987. En este momento, se dispone de <mark>{{ ibex35_n_observations }}</mark> observaciones y en el cálculo tenemos un grado de libertad: dada la confianza $\gamma$ y la proporción de valores contenidos entre los límites $D$, fijando una, obtenemos la otra; fijaremos la confianza:</p>
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <table class="table table-condensed">
+          <caption align="bottom"><strong>Tabla 1.</strong> Límites bilaterales de tolerancia del retorno diario del IBEX 35.</caption>
+          <thead><tr>
+            <th>Confianza $\gamma$</th>
+            <th>Proporción $D$</th>
+          </tr></thead>
+          <tbody class="text-right"><tr>
+            <td>0.999</td><td><mark>{{ ibex35_0_999_bitol_D }}</mark></td>
+            </tr>
+            <td>0.99</td><td><mark>{{ ibex35_0_99_bitol_D }}</mark></td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <p>La tabla 1 con los límites bilaterales, se interpreta de la siguiente forma:</p>
+      <li>En la primera fila, $\gamma = 0.999$ y <mark>$D = {{ ibex35_0_999_bitol_D }} $</mark>: con una confianza del 99,9%, se puede afirmar que solo <mark>{{ ibex35_0_999_bitol_per_10mille }}</mark> de cada 10000 días observados, unos <mark>{{ ibex35_0_999_bitol_per_sample }}</mark> días para una muestra del mismo tamaño que la nuestra, tendrían un movimiento más allá de los máximos observados en el rango <mark>$[{{ ibex35_max_drop }}\%, {{ ibex35_max_gain }}\%]$</mark>; de nuevo para una muestra del mismo tamaño. Dicho vulgarmente, <strong>si volvieramos atrás en el tiempo hasta el 5 de enero de 1987 y avanzaramos día a día hasta el presente, podríamos observar a lo sumo <mark>{{ ibex35_0_999_bitol_per_sample }} </mark> movimientos más bruscos que los ya conocidos, con un <mark>99,9%</mark> de confianza</strong>.</li>
+      <li>En la segunda fila, $\gamma = 0.99$ y <mark>$D = {{ ibex35_0_99_bitol_D }}$</mark>: solo ha variado la confianza, que en este caso sería del 99%, o sea que el resultado es un poco menos confiable. Dicho vulgarmente, <strong>si volvieramos atrás en el tiempo hasta el 5 de enero de 1987 y avanzaramos día a día hasta el presente, podríamos observar a lo sumo <mark>{{ ibex35_0_99_bitol_per_sample }}</mark> movimientos más bruscos que los ya conocidos, con un <mark>99%</mark> de confianza</strong>.</li>
+    </ul>
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <table class="table table-condensed">
+          <caption align="bottom"><strong>Tabla 2.</strong> Límites unilaterles de tolerancia del retorno diario del IBEX 35.</caption>
+          <thead><tr>
+            <th>Confianza $\gamma$</th>
+            <th>Proporción $D$</th>
+          </tr></thead>
+          <tbody class="text-right"><tr>
+            <td>0.999</td><td><mark>{{ ibex35_0_999_unitol_D }}</mark></td>
+            </tr>
+            <td>0.99</td><td><mark>{{ ibex35_0_99_unitol_D }}</mark></td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <p>La tabla 2 con el límite unilateral, se interpreta de la siguiente forma:</p>
+    <ul>
+      <li>En la primera fila, $\gamma = 0.999$ y <mark>$D = {{ ibex35_0_999_unitol_D }}$</mark>: con una confianza del 99,9%, se puede afirmar que solo <mark>{{ ibex35_0_999_unitol_per_100mille }}</mark> de cada 10000 días observados, unos <mark>{{ ibex35_0_999_unitol_per_sample }}</mark> días para una muestra del mismo tamaño que la nuestra, tendrían una caída superior a la máxima registrada del <mark>{{ ibex35_max_drop }}%</mark>; de nuevo para una muestra del mismo tamaño. Dicho vulgarmente, <strong>si volvieramos atrás en el tiempo hasta el 5 de enero de 1987 y avanzaramos día a día hasta el presente, podríamos observar a lo sumo <mark>{{ ibex35_0_999_unitol_per_sample }}</mark> caídas superiores a las conocidas, con un 99,9% de confianza</strong>.</li>
+      <li>En la segunda fila, $\gamma = 0.99$ y <mark>$D = {{ ibex35_0_99_unitol_D }}$</mark>: solo ha variado la confianza, que en este caso sería del 99%, o sea que el resultado es un poco menos confiable. Dicho vulgarmente, <strong>si volvieramos atrás en el tiempo hasta el 5 de enero de 1987 y avanzaramos día a día hasta el presente, podríamos observar a lo sumo <mark>{{ ibex35_0_99_unitol_per_sample }}</mark> caídas superiores a las conocidas, con un 99% de confianza</strong>.</li>
+    </ul>
+    <h2>Conclusión</h2>
+    <p>La exactitud de las matemáticas en este caso son irrefutables: de las <mark>{{ ibex35_n_observations}}</mark> observaciones, cada una correspondiente al cierre de una sesión del IBEX 35, podríamos haber presenciado algunas más extremas. Recordemos que los límites de tolerancia presentado no asumen una distribución, son no-paramétricos, ¡son ciertos!</p>
+    <p>Ahora la cuestión es ¿podemos extrapolar esta información hacia el futuro? Es decir, en las próximas {{ ibex35_n_observations }} ¿son aplicables los mismos límites?</p>
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <p class="lead text-center">Si volvieramos atrás en el tiempo hasta el 5 de enero de 1987 y avanzaramos día a día hasta el presente, podríamos observar a lo sumo <mark>{{ ibex35_0_999_unitol_per_sample }}</mark> caídas superiores a las conocidas, con un 99,9% de confianza.</p>
+      </div>
+    </div>
+    <p>Para responder a las preguntas anteriores afirmativamente, necesitamos que la población muestreada no varíe. La población es el mercado, compuesto por millones de agentes interdependientes que, salvo por un evento global y de fuerza mayor, no sería razonable pensar que vayan a cambiar su comportamiento en el corto plazo y en concierto. Por lo tanto, de no darse tal evento sincronizado, global e irruptiva, me atrevo a decir que los resultados aquí presentados tienen bastante validez por unos pocos años.</p>
+    <p>Y ya en términos totalmente subjetivos, un movimiento más excéntrico que las acontecidos hasta la fecha se me antoja un evento muy raro, aislado e imprevisible.</p>
+    <h2>Anexo: modelo probabilístico</h2>
+    <p>Si definimos $D$ como la proporción de observaciones de la variable aleatoria $X$ (cambió diario bursátil en nuestros ejemplos) entre $L_1$ y $L_2$, que son funciones univaluadas de las observaciones tal que</p>
+    <p>$$ \int_{L_1}^{L_2} = f(x, \theta)\ dx = F_X(L_2; \theta) - F_X(L_2, \theta), $$</p>
+    <p>entonces $L_1$ y $L_2$ reciben el nombre de límites estadísticos de tolerancia.</p>
+    <p>Ya que $L_1$ y $L_2$ son funciones de la variable aleatoria, ellas mismas son variables aleatorias. A su vez, la proporción $D$ es una variable aleatorioa, y la proposición de probabilidad</p>
+    <p>$$P(D \ge d) = \gamma $$</p>
+    <p>se interpreta como la probabilidad $\gamma$ de que la proporción de valores en la distribución de la variable aleatoria entre $L_1$ y $L_2$ no sea mayor que un $d$ dado.</p>
+    <p>Sean $X_{(r)}$ y $X_{(n-r+1)}$ el $r$-ésimo valor más pequeño y el $(n-r+1)$-ésimo valor más grande respectivamente, en una muestra aleatoria de tamaño $n$. Se ha demostrado que la proporción de valores $D$ que se encuentran entre $L_1 = X_{(r)}$ y $L_2 = X_{(n-r+1)}$ tiene una distribución beta con parámetros $\alpha = n - 2r + 1$ y $\beta = 2r$, <strong>sin importar la forma de la función de densidad de probabilidad</strong>.</p>
+    <p>La expresión puede simplificarse para un caso como el nuestro, en el que nos interesan los límites dados por el valor más pequeño, $X_1$ y el más grande $X_n$, reduciéndose a</p>
+    <p>$$ \gamma = 1 - [nd^{n-1} - (n-1)d^n] $$</p>
+    <p>Y para el caso de límites unilaterales, aun más simple:</p>
+    <p>$$ n = \frac{log(1-\gamma)}{log(d)} $$</p>
+  </div>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+{% endblock %}
