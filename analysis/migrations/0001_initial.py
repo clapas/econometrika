@@ -45,7 +45,7 @@ def insertData(apps, schema_editor):
         'name': 'Mapfre'
     }]
     for symbol in symbols:
-        Symbol(ticker=symbol['ticker'], name=symbol['name']).save()
+        Symbol(ticker=symbol['ticker'], name=symbol['name'], market=symbol['market']).save()
     invertia_tpl = 'https://www.invertia.com/es/mercados/bolsa/empresas/historico?p_p_id=cotizacioneshistoricas_WAR_ivfrontmarketsportlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=exportExcel&p_p_cacheability=cacheLevelPage&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_cotizacioneshistoricas_WAR_ivfrontmarketsportlet_startDate={{startDate}}&_cotizacioneshistoricas_WAR_ivfrontmarketsportlet_endDate={{endDate}}&_cotizacioneshistoricas_WAR_ivfrontmarketsportlet_idtel={invertia_key}'
     stocksources = [{
         'symbol_id': Symbol.objects.get(ticker='tef').id,
