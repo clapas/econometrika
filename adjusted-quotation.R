@@ -44,6 +44,36 @@ for (rs in rownames(symbols)) {
     rsi <- RSI(stock[, c('Close')])
     stock <- cbind(stock, bbands, rsi)
     stock <- as.data.frame(stock)
+    btns <- list(
+        list(
+            count = 3, 
+            label = "3M", 
+            step = "month",
+            stepmode = "backward"
+        ), list(
+            count = 6, 
+            label = "6M", 
+            step = "month",
+            stepmode = "backward"
+        ), list(
+            count = 1, 
+            label = "1A", 
+            step = "year",
+            stepmode = "backward"
+        ), list(
+            count = 3, 
+            label = "3A", 
+            step = "year",
+            stepmode = "backward"
+        ), list(
+            count = 5, 
+            label = "5A", 
+            step = "year",
+            stepmode = "backward"
+        ), list(
+            step = "all", label="Todo"
+    ))
+
     p1 <- stock %>%
         plot_ly(x = ~date, y = ~Close, type="scatter", mode="lines", name="Cierre") %>%
         add_lines(y = ~up , name = "B. Bollinger (50)",
@@ -57,7 +87,7 @@ for (rs in rownames(symbols)) {
         add_lines(y = ~mavg, name = "Media móvil (50)",
                   line = list(color = '#E377C2', width = 0.5),
                   hoverinfo = "none") %>%
-        layout(yaxis = list(color = "#B3a78c", title="Cierre"))
+        layout(yaxis = list(color = "#B3a78c", title="Cierre"), xaxis=list(rangeselector = list(x = 0, y = 1, buttons = btns, bgcolor = "#b3a78c", font=list(color="#1e2022"))))
 
     # plot volume bar chart
     p2 <- stock %>%

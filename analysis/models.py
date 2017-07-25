@@ -15,6 +15,9 @@ class Symbol(models.Model):
     ticker = models.CharField(max_length=8)
     name = models.CharField(max_length=64)
     market = models.CharField(max_length=64)
+    quantmod_ticker = models.CharField(max_length=12)
+    quantmod_lastsplit_date = models.DateField(null=True)
+    quantmod_lastsplit_ratio = models.FloatField(null=True)
 
 class StockQuote(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)

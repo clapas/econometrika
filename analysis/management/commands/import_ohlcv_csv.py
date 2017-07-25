@@ -16,17 +16,18 @@ class Command(BaseCommand):
             symbols = Symbol.objects.all()
         curdir = os.path.dirname(os.path.realpath(__file__))
         for symbol in symbols:
-            print(symbol)
             path = os.path.normpath(os.path.join(curdir, os.pardir, os.pardir, os.pardir, 'data', '%s.csv' % symbol.ticker))
-            print(path)
-            c = CopyMapping(
-                # Give it the model
-                StockQuote,
-                # The path to your CSV
-                path,
-                # And a dict mapping the  model fields to CSV headers
-                dict(date='date', open='open', close='close', high='high', low='low', volume='volume'),
-                static_mapping = {'symbol_id': symbol.id}
-            )
-            c.save()
-            self.stdout.write(self.style.SUCCESS('Successfully imported OHLCV rows for %s' % symbol.name))
+            try:
+                c = CopyMapping(
+                    # Give it the model
+                    StockQuote,
+                    # The path to your CSV
+                    path,
+                    # And a dict mapping the  model fields to CSV headers
+                    dict(date='date', open='open', close='close', high='high', low='low', volume='volume'),
+                    static_mapping = {'symbol_id': symbol.id}
+                )
+                c.save()
+                self.stdout.write(self.style.SUCCESS('Successfully imported OHLCV rows for %s' % symbol.name))
+            except ValueError:
+                self.stdout.write(self.style.ERROR('Could not find CSV file for %s in %s' % (symbol.name, path)))

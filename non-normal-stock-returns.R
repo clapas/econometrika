@@ -23,6 +23,7 @@ dbClearResult(stmt)
 options("scipen"=-2, "digits"=4)
 test <- shapiro.test(sample(ibex35$rate, 5000))
 stmt <- postgresqlExecStatement(con, 'insert into analysis_keyvalue (category, key, value) values ($1, $2, $3), ($4, $5, $6)',
+dbClearResult(stmt)
     c(category, 'shapiro_wilk_test_p', prettyNum(test$p.value), category, 'shapiro_wilk_test_W', prettyNum(test$statistic)))
 df <- data.frame(category=category, key=paste0('n_norm_drop_gt_', c('1pct', '3pct', '5pct', '7pct', '9pct', '11pct')), value=c(
     prettyNum(pnorm(log(0.99), mdg, sdg)*libex35),
