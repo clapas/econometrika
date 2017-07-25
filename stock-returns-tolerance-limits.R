@@ -12,7 +12,7 @@ category <- 'analysis.stock-returns-tolerance-limits'
 stmt <- postgresqlExecStatement(con, 'delete from analysis_keyvalue where category = $1', c(category))
 dbClearResult(stmt)
 stmt <- postgresqlExecStatement(con, 'insert into analysis_keyvalue (category, key, value) values ($1, $2, $3), ($4, $5, $6)',
-    c(category, 'gen_date', as.character(Sys.Date()), category, 'ibex35_n_observations', libex35))
+    c(category, 'last_ibex35_date', as.character(tail(ibex35$date, 1)), category, 'ibex35_n_observations', libex35))
 dbClearResult(stmt)
 stmt <- postgresqlExecStatement(con, 'insert into analysis_keyvalue (category, key, value) values ($1, $2, $3), ($4, $5, $6)',
     c(category, 'ibex35_max_drop_date', as.character(ibex35$date[match(min(ibex35$rate), ibex35$rate)]), category, 'ibex35_max_drop', prettyNum(exp(min(ibex35$rate))*100 - 100)))
