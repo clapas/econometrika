@@ -6,6 +6,7 @@ stmt <- dbSendQuery(con, "select * from analysis_symbol")
 symbols <- fetch(stmt, -1)
 dbClearResult(stmt)
 
+library(quantmod)
 for (rs in rownames(symbols)) {
     symbol <- symbols[rs, ]
     tryCatch({
