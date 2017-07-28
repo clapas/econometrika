@@ -1,7 +1,7 @@
 library(RPostgreSQL)
 driver <- PostgreSQL()
 con <- dbConnect(driver, host='localhost', dbname='econometrika', user='econometrika', password='^}jy5nnr(fVXK/Fw')
-stmt <- dbSendQuery(con, "select sq.* from analysis_stockquote sq join analysis_symbol sy on (sq.symbol_id = sy.id) where ticker = 'ibex35' order by date")
+stmt <- dbSendQuery(con, "select sq.* from analysis_symbolquote sq join analysis_symbol sy on (sq.symbol_id = sy.id) where ticker = 'IBEX35' order by date")
 ibex35 <- fetch(stmt, -1)
 dbClearResult(stmt)
 ibex35$rate <- c(0, log(tail(ibex35$close, -1)/head(ibex35$close, -1)))

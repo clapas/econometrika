@@ -1,7 +1,7 @@
 import os 
 from postgres_copy import CopyMapping
 from django.core.management.base import BaseCommand, CommandError
-from analysis.models import StockQuote, Symbol
+from analysis.models import SymbolQuote, Symbol
 
 class Command(BaseCommand):
     help = 'Import OHLCV from CSV file named after the ticker and with .csv extension. By default, data from all tickers are imported.'
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             try:
                 c = CopyMapping(
                     # Give it the model
-                    StockQuote,
+                    SymbolQuote,
                     # The path to your CSV
                     path,
                     # And a dict mapping the  model fields to CSV headers
