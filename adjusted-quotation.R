@@ -51,9 +51,15 @@ for (rs in rownames(symbols)) {
     date <- quotes$date
     quotes <- xts(quotes[, c('open', 'high', 'low', 'close', 'volume')], quotes$date)
     colnames(quotes) <- c('Open', 'High', 'Low', 'Close', 'Volume')
-    bbands <- BBands(quotes[, c('High', 'Low', 'Close')], 50, sd=2.1)
-    rsi <- RSI(quotes[, c('Close')])
-    quotes <- cbind(quotes, bbands, rsi)
+    if (length(quotes$Close) > 50) {
+        bbands <- BBands(quotes[, c('High', 'Low', 'Close')], 50, sd=2.1)
+        quotes <- cbind(quotes, bbands)
+    }
+    print(head(quotes))
+    if (length(quotes$Close) > 14) rsi <- RSI(quotes[, c('Close')])
+    else rsi <- xts(data.frame(EMA=rep(50, length(date))), date)
+    print(head(rsi))
+    quotes <- cbind(quotes, rsi)
     quotes <- as.data.frame(quotes)
     btns <- list(
         list(
@@ -86,7 +92,9 @@ for (rs in rownames(symbols)) {
     ))
 
     p1 <- quotes %>%
-        plot_ly(x = ~date, y = ~Close, type="scatter", mode="lines", name="Cierre") %>%
+        plot_ly(x = ~date, y = ~Close, type="scatter", mode="lines", name="Cierre") #%>%
+    if ('up' %in% colnames(quotes))
+    p1 <- p1 %>%
         add_lines(y = ~up , name = "B. Bollinger (50)",
                   line = list(color = '#bbb', width = 0.5),
                   legendgroup = "Bollinger Bands",
@@ -97,7 +105,8 @@ for (rs in rownames(symbols)) {
                   showlegend = FALSE, hoverinfo = "none") %>%
         add_lines(y = ~mavg, name = "Media móvil (50)",
                   line = list(color = '#E377C2', width = 0.5),
-                  hoverinfo = "none") %>%
+                  hoverinfo = "none") #%>%
+    p1 <- p1 %>%
         layout(title=tail(date, 1), yaxis = list(color = "#B3a78c", title="Cierre"), xaxis=list(rangeselector = list(x = 0, y = 1, buttons = btns, bgcolor = "#b3a78c", font=list(color="#1e2022"))))
 
     # plot volume bar chart
