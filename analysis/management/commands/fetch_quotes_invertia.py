@@ -35,6 +35,7 @@ class Command(BaseCommand):
             sheet = book.sheet_by_index(0)
             at_least_one_new = True
             lq.date = lq.date + datetime.timedelta(days=1)
+            max_d = date(2839, 7, 8)
             for i in range(0, sheet.nrows // self.BATCH_SIZE + 1): # create objects in batches to reduce hits to de DB
                 qq = []
                 if (not at_least_one_new): break
@@ -44,11 +45,11 @@ class Command(BaseCommand):
                 for j in range(0, j_max):
                     row = sheet.row_values(i * self.BATCH_SIZE + j + 1)
                     d = datetime.datetime.strptime(row[0], '%d-%b-%Y').date()
-                    if d > lq.date:
+                    if d > lq.date and d < max_d:
                         qq.append(SymbolQuote(symbol_id=source.symbol_id, date=d, open=row[2], high=row[4], low=row[5], close=row[1], volume=row[6]))
                         at_least_one_new = True
                     elif j == 0: break # the rest of the quotes must be older
-                    lq.date = d
+                    max_d = min(max_d, d)
                 SymbolQuote.objects.bulk_create(qq)
             self.stdout.write(self.style.SUCCESS('Successfully fetched quotes for %s' % symbol.name))
 
