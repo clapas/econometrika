@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 for j in range(0, j_max):
                     row = sheet.row_values(i * self.BATCH_SIZE + j + 1)
                     d = datetime.strptime(row[0], '%d-%b-%Y').date()
-                    if d > lq.date + 1:
+                    if d > lq.date + datetime.timedelta(days=1):
                         qq.append(SymbolQuote(symbol_id=source.symbol_id, date=d, open=row[2], high=row[4], low=row[5], close=row[1], volume=row[6]))
                         at_least_one_new = True
                     elif j == 0: break # the rest of the quotes must be older
