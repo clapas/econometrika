@@ -6,12 +6,12 @@ stmt <- dbSendQuery(con, "select * from analysis_split order by date desc")
 splits <- fetch(stmt, -1)
 dbClearResult(stmt)
 
-#stmt <- dbSendQuery(con, "select * from analysis_symbol")
-#symbols <- fetch(stmt, -1)
+stmt <- dbSendQuery(con, "select * from analysis_symbol")
+symbols <- fetch(stmt, -1)
 #symbols <- data.frame(id=110, ticker='REE', name='Red Eléctrica', market='MC')
 #symbols <- data.frame(id=24, ticker='BKIA', name='BANKIA', market='MC')
-symbols <- data.frame(id=91, ticker='MCM', name='MIQUEL Y COSTAS & MIQUEL', market='MC')
-#dbClearResult(stmt)
+#symbols <- data.frame(id=91, ticker='MCM', name='MIQUEL Y COSTAS & MIQUEL', market='MC')
+dbClearResult(stmt)
 
 library(plotly)
 library(TTR)
@@ -55,10 +55,8 @@ for (rs in rownames(symbols)) {
         bbands <- BBands(quotes[, c('High', 'Low', 'Close')], 50, sd=2.1)
         quotes <- cbind(quotes, bbands)
     }
-    print(head(quotes))
     if (length(quotes$Close) > 14) rsi <- RSI(quotes[, c('Close')])
     else rsi <- xts(data.frame(EMA=rep(50, length(date))), date)
-    print(head(rsi))
     quotes <- cbind(quotes, rsi)
     quotes <- as.data.frame(quotes)
     btns <- list(
