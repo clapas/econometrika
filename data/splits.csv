@@ -1,0 +1,116 @@
+ticker,name,date,proportion
+MTS,"Arcelor Mittal",2017-05-18,3
+CAF,C.A.F.,2016-11-30,0.1
+REE,"Red Eléctrica",2016-07-11,0.25
+RJF,"Laboratorio Reig Jofre",2015-09-22,20
+PRS,Prisa,2015-05-22,30
+"Vousse Corp, S.a.",2015-04-02,150,
+CAR,Carbures,2014-09-09,0.25
+Ebioss,2014-05-21,0.33,
+Ebioss,2013-11-01,0.5,
+POP,"Banco Popular",2013-06-17,5
+"Seda Barna",2012-05-14,100,
+IAG,"Inter. Consolidated Airlines g.",2011-01-21,0.98
+"Banco De Valencia",2008-07-30,0.25,
+TEC,Tecnocom,2007-12-07,0.5
+POP,"Banco Popular",2005-06-21,0.2
+CGI,"Ge. Inversiones",2002-11-18,5
+POP,"Banco Popular",2000-02-14,0.5
+FCC,F.C.C.,1999-09-30,0.5
+Indo,1999-09-15,0.17,
+MEL,"Meliá Hotels International",1999-08-09,0.33
+"Grupo Tavex",1999-08-04,0.33,
+GAS,"Gas Natural Fenosa",1999-07-12,0.33
+CGI,"Ge. Inversiones",1999-07-12,0.33
+C.V.N.e,1999-07-05,0.2,
+"Banco De Valencia",1999-05-25,0.33,
+TEC,Tecnocom,1999-02-05,0.33
+"Campofrio Food Gr",1998-07-20,0.33,
+BBVA,Bbva,1998-07-13,0.25
+CPL,"Cementos Portland",1998-06-29,0.5
+Metrovacesa,1998-06-08,0.5,
+OHL,Ohl,1997-12-05,0.2
+FCC,F.C.C.,1997-10-20,0.25
+POP,"Banco Popular",1997-09-08,0.25
+"Campofrio Food Gr",1997-07-29,0.5,
+BBVA,Bbva,1997-07-21,0.33
+GAS,"Gas Natural Fenosa",1997-07-21,0.25
+ANA,Acciona,1998-11-30,0.17
+ACS,Acs,1997-10-13,0.25
+ACS,Acs,2004-06-10,0.33
+AMP,Amper,1999-09-28,0.5
+AZK,Azkoyen,1998-11-27,0.2
+AZK,Azkoyen,1999-08-06,0.5
+SAB,"Banco De Sabadell",2007-05-07,0.25
+SAN,"Banco Santander",1997-06-09,0.33
+SAN,"Banco Santander",1998-06-29,0.5
+SAN,"Banco Santander",1999-06-14,0.5
+BKIA,Bankia,2013-04-22,100
+BKIA,Bankia,2017-06-05,4
+BKT,Bankinter,1997-07-21,0.33
+BKT,Bankinter,1998-07-20,0.5
+BKT,Bankinter,2007-07-23,0.2
+CIE,"Cie Automotive",1998-07-27,0.33
+CIE,"Cie Automotive",2006-05-22,0.2
+CLEO,Cleop,2006-10-27,0.33
+CMC,Coemac,2004-06-14,0.33
+ALB,"Corporacion Financiera Alba",1999-07-19,0.17
+ALB,"Corporacion Financiera Alba",2000-10-28,0.17
+MDF,"Duro Felguera",2006-06-20,0.17
+EBRO,"Ebro Foods",1999-09-28,0.33
+ENO,Elecnor,2005-07-22,0.2
+ENO,Elecnor,2008-09-15,0.5
+ELE,Endesa,1997-07-24,0.25
+ECR,Ercros,2009-10-12,10
+FER,Ferrovial,2009-12-04,4
+LBK,"Liberbank Sa",2016-01-11,3
+DIA,Atresmedia,2005-04-27,0.25
+ADV,"Adveo Group Internacional sa",1998-09-14,0.5
+QBT,Quabit,2016-05-12,50
+GRF,Grifols,2016-01-04,0.5
+DGI,Dogi,2014-04-23,10
+EZE,"Grupo Ezentis",2013-12-16,4
+CASH,Prosegur,2012-07-06,0.1
+ENC,Ence,2007-04-26,0.2
+FAE,Faes,2007-01-29,0.5
+INY,Inypsa,2006-09-22,0.5
+R4,"Renta 4",2006-07-17,0.5
+GCO,"Catalana Occidente",2006-07-10,0.2
+R4,"Renta 4",2006-07-07,0.5
+OLE,Deoleo,2005-05-23,0.25
+SPS,"Service Point",2005-05-09,10
+ACX,Acerinox,2004-07-26,0.25
+SGRE,Gamesa,2004-06-07,0.33
+ABG,Abengoa,2001-07-26,0.25
+IDR,Indra,2000-10-02,0.5
+SPS,"Service Point",1999-11-29,0.05
+ZOT,Zardoya,1999-09-10,0.5
+EZE,"Grupo Ezentis",1999-09-03,0.33
+ABG,Abengoa,1998-07-27,0.33
+FAE,Faes,1998-07-27,0.25
+SCYR,Sacyr,1998-07-20,0.33
+NYE,Nyesa,1998-07-13,0.2
+ACX,Acerinox,1998-07-06,0.2
+TPZ,Telepizza,1998-05-18,0.05
+ZOT,Zardoya,1998-02-16,0.2
+GCO,"Catalana Occidente",1997-02-21,0.25
+IBE,Iberdrola,2007-10-08,0.25
+ITX,Inditex,2014-07-28,0.2
+COL,"Inmobiliaria Colonial",2011-04-07,100
+COL,"Inmobiliaria Colonial",2016-07-26,10
+LGT,"Lingotes Especiales",1999-07-12,0.33
+MAP,Mapfre,1997-12-22,0.5
+MAP,Mapfre,2001-09-17,0.33
+MAP,Mapfre,2006-10-30,0.2
+NAT,Natra,1998-12-10,0.2
+NEA,"Nicolas Correa",1998-06-29,0.2
+NEA,"Nicolas Correa",1999-07-12,0.5
+PRM,Prim,2006-02-20,0.5
+REP,Repsol,1999-04-19,0.33
+TEF,Telefonica,1999-07-26,0.33
+TRG,"Tubos Reunidos",2003-07-21,0.33
+TRG,"Tubos Reunidos",2005-11-14,0.33
+TRG,"Tubos Reunidos",2007-10-08,0.25
+VID,Vidrala,1997-05-12,0.5
+VID,Vidrala,1998-05-18,0.33
+VIS,Viscofan,1999-03-15,0.5
