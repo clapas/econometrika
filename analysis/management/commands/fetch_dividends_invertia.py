@@ -20,10 +20,7 @@ class Command(BaseCommand):
         # going to parse spanish numbers and dates, e.g. 13/ene/2001, so set that locale
         saved_locale = locale.setlocale(locale.LC_ALL)
         locale.setlocale(locale.LC_ALL, 'es_ES.UTF-8')
-        m = 0
         for source in sources:
-            if m > 0: break
-            m += 1
             symbol = Symbol.objects.get(id=source.symbol_id)
             url = source.key
             try:
