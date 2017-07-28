@@ -35,8 +35,11 @@ class Command(BaseCommand):
                     if cell.string is not None:
                         cells.append(cell.string.strip())
                 if len(cells) > 0:
-                    ex_date = datetime.strptime(cells[0], '%d/%m/%Y').date()
-                    Dividend(ex_date=ex_date, gross=locale.atof(cells[3]), type=cells[1][0:32], symbol_id=source.symbol_id).save()
+                    try:
+                        ex_date = datetime.strptime(cells[0], '%d/%m/%Y').date()
+                        Dividend(ex_date=ex_date, gross=locale.atof(cells[3]), type=cells[1][0:32], symbol_id=source.symbol_id).save()
+                    except ValueError: # e.g. no results for the symbol
+                        continue
             self.stdout.write(self.style.SUCCESS('Successfully fetched dividends for %s' % symbol.name))
 
         locale.setlocale(locale.LC_ALL, saved_locale)
