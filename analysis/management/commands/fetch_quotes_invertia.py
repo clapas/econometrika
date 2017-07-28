@@ -26,7 +26,7 @@ class Command(BaseCommand):
             symbol = Symbol.objects.get(id=source.symbol_id)
             url_tpl = source.key
             try:
-                lq = SymbolQuote.objects.filter(symbol=source.symbol_id).latest('date') + 1
+                lq = SymbolQuote.objects.filter(symbol=source.symbol_id).latest('date')
             except SymbolQuote.DoesNotExist:
                 lq = SymbolQuote(date=date(1839, 7, 8))
             url = url_tpl.format(startDate = lq.date.strftime('%d/%m/%Y'), endDate = date.today().strftime('%d/%m/%Y'))
