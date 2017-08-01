@@ -2,7 +2,9 @@
 #from __future__ import unicode_literals
 import os
 from django.shortcuts import render
-from django.templatetags.static import static
+#from django.templatetags.static import static
+from django.conf.urls.static import static
+from django.conf import settings
 from datetime import datetime
 from django.http import HttpResponse
 from analysis.models import KeyValue, Plot, Symbol
@@ -53,9 +55,12 @@ def stock_returns_tolerance_limits(request):
     
 def plot(request, name):
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    srcdoc = open(os.path.join(dir_path, 'static', 'analysis', '%s.html' % name), 'rb').read().decode('UTF-8')
-    srcdoc = srcdoc.replace('plotly_lib', static('analysis/plotly_lib'))
     plot = Plot.objects.get(slug=name)
+    #srcdoc = open(os.path.join(dir_path, 'static', 'analysis', '%s.html' % name), 'rb').read().decode('UTF-8')
+    #srcdoc = srcdoc.replace('plotly_lib', static('analysis/plotly_lib'))
+    srcdoc = open(plot.file_path, 'rb').read().decode('UTF-8')
+    #srcdoc = srcdoc.replace('plotly_lib', static(os.path.join(settings.MEDIA_URL, 'plotly_lib'), document_root=settings.MEDIA_ROOT))
+    srcdoc = srcdoc.replace('plotly_lib', '/media/plotly_lib')
     title = plot.title
     html_above = plot.html_above
     return render(request, 'analysis/plot.html', {'srcdoc': srcdoc, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True})

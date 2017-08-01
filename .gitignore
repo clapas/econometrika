@@ -4,10 +4,9 @@
 # compiled python
 *.pyc
 
-# third party libraries
-static/node_components
-node_modules
-
-# file with sensitive data
+# files with sensitive data
 econometrika/settings_env.py
 .Renviron
+
+# generated files
+collected_static
