@@ -9,4 +9,5 @@ static/node_components
 node_modules
 
 # file with sensitive data
-econometrika/settings.py
+econometrika/settings_env.py
+.Renviron

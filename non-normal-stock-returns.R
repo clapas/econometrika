@@ -1,6 +1,10 @@
 library(RPostgreSQL)
-driver <- PostgreSQL()
-con <- dbConnect(driver, host='localhost', dbname='econometrika', user='econometrika', password='^}jy5nnr(fVXK/Fw')
+host <- Sys.getenv('HOST', 'localhost')
+dbname <- Sys.getenv('DATABASE_NAME', 'econometrika')
+dbuser <- Sys.getenv('DATABASE_USER')
+dbpass <- Sys.getenv('DATABASE_PASSWORD')
+con <- dbConnect(driver, host=host, dbname=dbname, user=dbuser, password=dbpass)
+
 stmt <- dbSendQuery(con, "select sq.* from analysis_symbolquote sq join analysis_symbol sy on (sq.symbol_id = sy.id) where ticker = 'IBEX35' order by date")
 ibex35 <- fetch(stmt, -1)
 dbClearResult(stmt)
