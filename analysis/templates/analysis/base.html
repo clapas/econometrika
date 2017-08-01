@@ -14,9 +14,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">-->
     <link rel="stylesheet" href="{% static 'econometrika.css' %}">
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css">
+    <!--<link rel="stylesheet" href="http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css">-->
     <style>
       body {
         font-family: "Computer Modern Concrete";
@@ -65,6 +66,18 @@
             <!--<li><a href="#">Materias primas</a></li>
             <li><a href="#">Empresas</a></li>-->
           </ul>
+          <form class="navbar-form" role="search">
+            {% csrf_token %}
+            <div class="form-group" style="display: inline">
+              <div class="input-group" style="display: table; padding-left: 15px">
+                <div class="input-group-addon" style="width: 1%">Símbolo</div>
+                <style>
+                    .select2 .selection .select2-selection { border-bottom-left-radius: 0; border-top-left-radius: 0 }
+                </style>
+                {{ symbol_form.symbol }}
+              <div>
+            <div>
+          </form>
           <!--
           <ul class="nav navbar-nav navbar-right">
             <li class="active"><a href="./">Español <span class="caret"></span><span class="sr-only">(current)</span></a></li>
@@ -116,6 +129,16 @@
         ga('send', 'pageview');
       </script>
     {% endif %}
+    <script>
+        var symbol_url = '{% url 'plot' 'TICKER-adjusted-quote' %}'
+        $(function() {
+            $('select[name="symbol"]').on('change', function(e) {
+                window.location.href = symbol_url.replace('TICKER', $(e.target).val().toLowerCase());
+            });
+        });
+    </script>
+    {{ symbol_form.media }}
+    <!-- BODY END BLOCK --> {% block body_end %}{% endblock %}
   </body>
 </html>
 

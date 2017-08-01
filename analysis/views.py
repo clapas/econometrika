@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.templatetags.static import static
 from datetime import datetime
 from django.http import HttpResponse
-from analysis.models import KeyValue, Plot
+from analysis.models import KeyValue, Plot, Symbol
+from dal import autocomplete
 import locale
 
 def non_normal_stock_returns(request):
@@ -56,6 +57,22 @@ def plot(request, name):
     srcdoc = srcdoc.replace('plotly_lib', static('analysis/plotly_lib'))
     plot = Plot.objects.get(slug=name)
     title = plot.title
-    print(title)
     html_above = plot.html_above
     return render(request, 'analysis/plot.html', {'srcdoc': srcdoc, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True})
+
+class SymbolAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        #if not self.request.user.is_authenticated():
+        #    return Symbol.objects.none()
+
+        qs = Symbol.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+    def get_result_value(self, result):
+        return result.ticker
+

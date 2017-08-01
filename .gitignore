@@ -4,5 +4,9 @@
 # compiled python
 *.pyc
 
+# third party libraries
+static/node_components
+node_modules
+
 # file with sensitive data
 econometrika/settings.py

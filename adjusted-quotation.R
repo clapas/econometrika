@@ -8,9 +8,7 @@ dbClearResult(stmt)
 
 stmt <- dbSendQuery(con, "select * from analysis_symbol")
 symbols <- fetch(stmt, -1)
-#symbols <- data.frame(id=110, ticker='REE', name='Red Eléctrica', market='MC')
-#symbols <- data.frame(id=24, ticker='BKIA', name='BANKIA', market='MC')
-#symbols <- data.frame(id=91, ticker='MCM', name='MIQUEL Y COSTAS & MIQUEL', market='MC')
+#symbols <- data.frame(id=114, ticker='REP', name='REPSOL', market='MC')
 dbClearResult(stmt)
 
 library(plotly)

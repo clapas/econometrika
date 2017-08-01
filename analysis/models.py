@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from dal import autocomplete
+from django import forms
 
 # Create your models here.
 class KeyValue(models.Model):
@@ -29,6 +31,9 @@ class Symbol(models.Model):
     )
     type = models.CharField(max_length=12, choices=SYMBOL_TYPE)
     adjusted_until = models.DateField(null=True)
+
+    def __str__(self):
+        return "{0}: {1} -{2}-".format(self.ticker, self.name, self.market)
 
 class SymbolQuote(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
@@ -94,3 +99,13 @@ class SymbolSource(models.Model):
     key = models.CharField(max_length=1024)
     class Meta:
         unique_together = ('type', 'name', 'symbol')
+    def __str__(self):
+        return self.name
+
+class SymbolSearchForm(forms.Form):
+    symbol = forms.ModelChoiceField(
+        queryset=Symbol.objects.none(),
+        widget=autocomplete.ModelSelect2(url='symbol-autocomplete', attrs={
+            'class': 'form-control', 'style': 'width: 100%', 'data-minimum-input-length': 2
+        })
+    )
