@@ -30,11 +30,9 @@ class Command(BaseCommand):
             except SymbolQuote.DoesNotExist:
                 lq = SymbolQuote(date=date(1839, 7, 8))
             url = url_tpl.format(startDate = lq.date.strftime('%d/%m/%Y'), endDate = date.today().strftime('%d/%m/%Y'))
-            #url = 'file:///home/claudio/Downloads/historica.xls'
             book = xlrd.open_workbook(file_contents=urlopen(url).read())
             sheet = book.sheet_by_index(0)
             at_least_one_new = True
-            lq.date = lq.date + datetime.timedelta(days=1)
             max_d = date(2839, 7, 8)
             for i in range(0, sheet.nrows // self.BATCH_SIZE + 1): # create objects in batches to reduce hits to de DB
                 qq = []
