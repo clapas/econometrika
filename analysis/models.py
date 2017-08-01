@@ -82,7 +82,7 @@ class Dividend(models.Model):
     net = models.FloatField(null=True)
     type = models.CharField(max_length=32, blank=True)
     class Meta:
-        unique_together = ('symbol', 'pay_date')
+        unique_together = ('symbol', 'ex_date')
 
 class SymbolSource(models.Model):
     name = models.CharField(max_length=32)

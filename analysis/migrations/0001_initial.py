@@ -157,7 +157,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='dividend',
-            unique_together=set([('symbol', 'pay_date')]),
+            unique_together=set([('symbol', 'ex_date')]),
         ),
         migrations.CreateModel(
             name='Split',

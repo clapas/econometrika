@@ -24,9 +24,9 @@ class Command(BaseCommand):
             symbol = Symbol.objects.get(id=source.symbol_id)
             url = source.key
             try:
-                lq = Dividend.objects.filter(symbol=source.symbol_id).latest('ex_date')
+                ld = Dividend.objects.filter(symbol=source.symbol_id).latest('ex_date')
             except Dividend.DoesNotExist:
-                lq = Dividend(ex_date=date(1839,7,8))
+                ld = Dividend(ex_date=date(1839,7,8))
             soup = BeautifulSoup(urlopen(url).read(), 'lxml')
             rows = soup.find_all('tr')
             for row in rows:
@@ -37,7 +37,8 @@ class Command(BaseCommand):
                 if len(cells) > 0:
                     try:
                         ex_date = datetime.strptime(cells[0], '%d/%m/%Y').date()
-                        Dividend(ex_date=ex_date, gross=locale.atof(cells[3]), type=cells[1][0:32], symbol_id=source.symbol_id).save()
+                        if ex_date > ld.ex_date:
+                            Dividend(ex_date=ex_date, gross=locale.atof(cells[3]), type=cells[1][0:32], symbol_id=source.symbol_id).save()
                     except ValueError: # e.g. no results for the symbol
                         continue
             self.stdout.write(self.style.SUCCESS('Successfully fetched dividends for %s' % symbol.name))
