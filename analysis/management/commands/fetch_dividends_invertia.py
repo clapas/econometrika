@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import IntegrityError
 from analysis.models import SymbolSource, Dividend, Symbol
 from datetime import datetime, date
 from urllib.request import urlopen
@@ -41,6 +42,9 @@ class Command(BaseCommand):
                             Dividend(ex_date=ex_date, gross=locale.atof(cells[3]), type=cells[1][0:32], symbol_id=source.symbol_id).save()
                     except ValueError: # e.g. no results for the symbol
                         continue
+                    except IntegrityError: # duplicate ex_date from origin
+                        continue
+
             self.stdout.write(self.style.SUCCESS('Successfully fetched dividends for %s' % symbol.name))
 
         locale.setlocale(locale.LC_ALL, saved_locale)
