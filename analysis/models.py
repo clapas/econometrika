@@ -109,3 +109,29 @@ class SymbolSearchForm(forms.Form):
             'class': 'form-control', 'style': 'width: 100%', 'data-minimum-input-length': 2
         })
     )
+
+class FinancialConcept(models.Model):
+    name = models.CharField(max_length=256)
+    taxonomy = models.CharField(max_length=128)
+    xbrl_element = models.CharField(max_length=256, unique=True)
+    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
+    class Meta:
+        unique_together = ('taxonomy', 'name')
+
+class FinancialContext(models.Model):
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    currency = models.CharField(max_length=4)
+    period = models.CharField(max_length=8)
+    period_begin = models.DateField()
+    period_end = models.DateField()
+    fiscal_year = models.IntegerField()
+    class Meta:
+        unique_together = ('symbol', 'period_begin', 'period_end')
+
+class FinancialFact(models.Model):
+    concept = models.ForeignKey(FinancialConcept, on_delete=models.CASCADE)
+    context = models.ForeignKey(FinancialContext, on_delete=models.CASCADE)
+    amount= models.FloatField()
+    class Meta:
+        unique_together = ('concept', 'context')
+
