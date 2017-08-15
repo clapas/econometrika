@@ -74,7 +74,7 @@ class Command(BaseCommand):
             ns = 'ipp_ge'
             for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
                 try:
-                    n_shares[k] = float(root.find('.//ipp_ge:I1288[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
+                    n_shares[k] = float(root.find('.//ipp_ge:I1300[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
                         float(root.find('.//ipp_ge:I1295[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
                 except:
                     n_shares[k] = None
@@ -82,12 +82,21 @@ class Command(BaseCommand):
             ns = 'ipp_en'
             for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
                 try:
-                    n_shares[k] = float(root.find('.//ipp_ge:I1570[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
+                    n_shares[k] = float(root.find('.//ipp_ge:I1572[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
                         float(root.find('.//ipp_ge:I1580[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
                 except:
                     n_shares[k] = None
-        else: #'ipp_se'
+        elif 'ipp_se' in root.nsmap:
             ns = 'ipp_se'
+            for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
+                try:
+                    n_shares[k] = float(root.find('.//ipp_se:I1300[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
+                        float(root.find('.//ipp_se:I1295[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
+                except:
+                    n_shares[k] = None
+        else:
+            raise Exception('Unknown type of entity')
+
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidadaLineaElementos' % ns
         bal_xbrl = '%s:BalanceConsolidadoLineaElementos' % ns
         finreports = [
