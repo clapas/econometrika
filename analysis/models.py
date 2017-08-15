@@ -117,14 +117,14 @@ class FinancialConcept(models.Model):
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     class Meta:
         unique_together = ('taxonomy', 'name')
+        unique_together = ('taxonomy', 'xbrl_element')
 
 class FinancialContext(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
     currency = models.CharField(max_length=4)
-    period = models.CharField(max_length=8)
     period_begin = models.DateField()
     period_end = models.DateField()
-    fiscal_year = models.IntegerField()
+    n_shares = models.BigIntegerField(null=True)
     class Meta:
         unique_together = ('symbol', 'period_begin', 'period_end')
 
