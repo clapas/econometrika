@@ -18,8 +18,8 @@ dbClearResult(stmt)
 library(plotly)
 library(TTR)
 library(xts)
-libpath <- file.path(getwd(), './analysis/static/analysis/plotly_lib')
-bpath <- './analysis/static/analysis/'
+libpath <- file.path(getwd(), './media/plotly_lib')
+bpath <- './media/'
 for (rs in rownames(symbols)) {
     symbol <- symbols[rs,]
     stmt <- dbSendQuery(con, "select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 order by date", symbol$id)
