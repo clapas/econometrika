@@ -16,6 +16,7 @@ symbols <- fetch(stmt, -1)
 dbClearResult(stmt)
 
 library(dygraphs)
+library(htmltools)
 library(knitr)
 library(TTR)
 library(xts)
