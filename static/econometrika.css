@@ -103,3 +103,14 @@ footer {
 .disclaimer small {
   font-size: 0.75em;
 }
+
+.caret-lg {
+  border-top: 8px solid;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+.dropup .caret-lg, .navbar-fixed-bottom .dropdown .caret-lg {
+  border-top: 0;
+  border-bottom: 8px solid;
+}

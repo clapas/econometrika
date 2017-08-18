@@ -1,26 +1,24 @@
 {% extends 'analysis/base.html' %}
+{% load static %}
+{% block head_end %}
+  <link href="{% static 'dygraphs_files/dygraphs-1.1.1/dygraph.css' %}" rel="stylesheet" />
+{% endblock %}
 {% block content %}
-  <div class="container-fluid" style="height: 100%">
-    <h1 class="page-header">{% block title %}{{ title }}{% endblock %}</h1>
+  <div class="container-fluid">
+    <h1 class="page-header">{% block title %}{{ title }}{% endblock %}
+      <small class="well well-sm pull-right">{{ last_quote }}{% if last_pct_change > 0 %}<span class="dropup">{% endif %}
+        <span style="color: {% if last_pct_change > 0 %}green{% else %}red{% endif %}">
+          <span class="caret caret-lg"></span> {{ last_pct_change }}%</span>
+      {% if last_pct_change < 0 %}</span><!-- .dropup -->{% endif %}</small></h1>
     {{ html_above | safe }}
-    <div class="plotly-loading" style="width: 100%; height: 100%">
-      <div class="plotlybars-wrapper">
-        <div class="plotlybars">
-          <div class="plotlybars-bar b1"></div>
-          <div class="plotlybars-bar b2"></div>
-          <div class="plotlybars-bar b3"></div>
-          <div class="plotlybars-bar b4"></div>
-          <div class="plotlybars-bar b5"></div>
-          <div class="plotlybars-bar b6"></div>
-          <div class="plotlybars-bar b7"></div>
-        </div>
-        <div class="plotlybars-text">
-          loading
-        </div>
-      </div>
-    </div>
-    <iframe srcdoc="{{ srcdoc }}" width="100%" height="100%" frameborder="0" seamless scrolling="no"></iframe>
+    {{ fragment | safe }}
   </div>
-  <!--<script src="https://github.com/jugglinmike/srcdoc-polyfill/raw/v1.0.0/srcdoc-polyfill.min.js"></script>-->
-  <script src="https://cdn.jsdelivr.net/gh/jugglinmike/srcdoc-polyfill/srcdoc-polyfill.min.js"></script>
+{% endblock %}
+{% block body_end %}
+  <script src="{% static 'dygraphs_files/htmlwidgets-0.8/htmlwidgets.js' %}"></script>
+  <script src="{% static 'dygraphs_files/dygraphs-1.1.1/dygraph-combined.js' %}"></script>
+  <script src="{% static 'dygraphs_files/moment-2.8.4/moment.js' %}"></script>
+  <!-- <script src="{% static 'dygraphs_files/moment-timezone-0.2.5/moment-timezone-with-data.js' %}"></script> -->
+  <!-- <script src="{% static 'dygraphs_files/moment-fquarter-1.0.0/moment-fquarter.min.js' %}"></script> -->
+  <script src="{% static 'dygraphs_files/dygraphs-binding-1.1.1.4/dygraphs.js' %}"></script>
 {% endblock %}

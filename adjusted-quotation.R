@@ -16,6 +16,8 @@ symbols <- fetch(stmt, -1)
 dbClearResult(stmt)
 
 library(plotly)
+library(htmltools)
+library(knitr)
 library(TTR)
 library(xts)
 libpath <- file.path(getwd(), './media/plotly_lib')
@@ -56,86 +58,23 @@ for (rs in rownames(symbols)) {
     if (length(quotes$Close) > 50) {
         bbands <- BBands(quotes[, c('High', 'Low', 'Close')], 50, sd=2.1)
         quotes <- cbind(quotes, bbands)
+        dyg1 <- dygraph(quotes[, c('Close', 'up', 'dn', 'mavg')], width='100%', height='400px', group='symbol', ylab='Cotización (€)') %>%
+            dySeries(c('dn', 'Close', 'up'), strokeWidth=1, label='Cierre') %>%
+            dySeries(c('mavg'), strokeWidth=0.5, label='Media móvil')
     }
-    if (length(quotes$Close) > 14) rsi <- RSI(quotes[, c('Close')])
-    else rsi <- xts(data.frame(EMA=rep(50, length(date))), date)
-    quotes <- cbind(quotes, rsi)
-    quotes <- as.data.frame(quotes)
-    btns <- list(
-        list(
-            count = 3, 
-            label = "3M", 
-            step = "month",
-            stepmode = "backward"
-        ), list(
-            count = 6, 
-            label = "6M", 
-            step = "month",
-            stepmode = "backward"
-        ), list(
-            count = 1, 
-            label = "1A", 
-            step = "year",
-            stepmode = "backward"
-        ), list(
-            count = 3, 
-            label = "3A", 
-            step = "year",
-            stepmode = "backward"
-        ), list(
-            count = 5, 
-            label = "5A", 
-            step = "year",
-            stepmode = "backward"
-        ), list(
-            step = "all", label="Todo"
-    ))
-
-    p1 <- quotes %>%
-        plot_ly(x = ~date, y = ~Close, type="scatter", mode="lines", name="Cierre") #%>%
-    if ('up' %in% colnames(quotes))
-    p1 <- p1 %>%
-        add_lines(y = ~up , name = "B. Bollinger (50)",
-                  line = list(color = '#bbb', width = 0.5),
-                  legendgroup = "Bollinger Bands",
-                  hoverinfo = "none") %>%
-        add_lines(y = ~dn, name = "B. Bollinger (50)",
-                  line = list(color = '#bbb', width = 0.5),
-                  legendgroup = "Bollinger Bands",
-                  showlegend = FALSE, hoverinfo = "none") %>%
-        add_lines(y = ~mavg, name = "Media móvil (50)",
-                  line = list(color = '#E377C2', width = 0.5),
-                  hoverinfo = "none") #%>%
-    p1 <- p1 %>%
-        layout(title=tail(date, 1), yaxis = list(color = "#B3a78c", title="Cierre"), xaxis=list(rangeselector = list(x = 0, y = 1, buttons = btns, bgcolor = "#b3a78c", font=list(color="#1e2022"))))
-
-    # plot volume bar chart
-    p2 <- quotes %>%
-        plot_ly(x=~date, y=~Volume, type='bar', name = "Volumen") %>% #,
-                #color = ~direction, colors = c('#17BECF','#7F7F7F')) %>%
-        layout(yaxis = list(color = "b3a78c", title = "Volumen"))
-
-    p3 <- quotes %>%
-        plot_ly(x=~date, y = ~EMA, name = "RSI (14)", type="scatter", mode="lines",
-                  line = list(color = '#53e752', width = 1),
-                  hoverinfo = "none") %>%
-        layout(yaxis = list(color = "#B3a78c", title = "RSI"))
-
-    ply <- subplot(p1, p2, p3, heights = c(0.65, 0.15, 0.15), nrows=3,
-                   shareX = TRUE, titleY = TRUE) %>%
-        layout(title = paste0('[', tail(quotes$Close, 1), '] ', symbol$name, ' (cotización ajustada): ', head(date, 1), ' - ' , tail(date, 1)),
-               margin = list(t=50),
-               font = list(color = "#B3A78C"),
-               paper_bgcolor = '#1E2022',
-               plot_bgcolor = '#3e3e3e',
-               legend = list(orientation = 'h', x = 0.5, y = 1.02,
-                             xanchor = 'center', yref = 'paper',
-                             font = list(size = 10),
-                             bgcolor = 'transparent'))
-
+    else dyg1 <- dygraph(quotes[, c('Close')], width='100%', height='400px', group='symbol', ylab='Cotización (€)') %>%
+        dySeries(c('Close'), strokeWidth=1, label='Cierre')
+    dyg1 <- dyg1 %>% dyOptions(colors = RColorBrewer::brewer.pal(3, 'Set2'), mobileDisableYTouch=TRUE)
+    dyg2 <- dygraph(quotes[,'Volume'], width='100%', height='150px', group='symbol', ylab='Nº acciones') %>%
+        dySeries('Volume', label='Volumen') %>%
+        dyRangeSelector() %>%
+        dyOptions(fillGraph=TRUE, fillAlpha=0.7, colors=RColorBrewer::brewer.pal(4, 'Set2')[3:4], mobileDisableYTouch=TRUE)
     slug <- paste0(tolower(symbol$ticker), '-adjusted-quote')
     wpath <- file.path(getwd(), bpath, paste0(slug, '.html'))
-    htmlwidgets::saveWidget(ply, wpath, libdir=libpath, selfcontained=F)
+    knit(text='<!--begin.rcode echo=F
+        tagList(dyg1)
+        tagList(dyg2)
+    end.rcode-->', output=wpath)
     stmt <- postgresqlExecStatement(con, 'delete from analysis_plot where slug = $1', slug)
     dbClearResult(stmt)
     stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above) values ($1, $2, $3, $4, $5, $6, $7)',

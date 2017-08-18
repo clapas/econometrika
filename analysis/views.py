@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from datetime import datetime
 from django.http import HttpResponse
-from analysis.models import KeyValue, Plot, Symbol
+from analysis.models import KeyValue, Plot, Symbol, SymbolQuote
 from dal import autocomplete
 import locale
 
@@ -56,14 +56,13 @@ def stock_returns_tolerance_limits(request):
 def plot(request, name):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     plot = Plot.objects.get(slug=name)
-    #srcdoc = open(os.path.join(dir_path, 'static', 'analysis', '%s.html' % name), 'rb').read().decode('UTF-8')
-    #srcdoc = srcdoc.replace('plotly_lib', static('analysis/plotly_lib'))
-    srcdoc = open(plot.file_path, 'rb').read().decode('UTF-8')
-    #srcdoc = srcdoc.replace('plotly_lib', static(os.path.join(settings.MEDIA_URL, 'plotly_lib'), document_root=settings.MEDIA_ROOT))
-    srcdoc = srcdoc.replace('plotly_lib', '/media/plotly_lib')
+    last_two_quotes = SymbolQuote.objects.filter(symbol_id=plot.symbol_id).order_by('-date')[:2]
+    last_pct_change = round((last_two_quotes[0].close / last_two_quotes[1].close - 1) * 100, 2)
+    last_quote = last_two_quotes[0].close
+    fragment = open(plot.file_path, 'rb').read().decode('UTF-8')
     title = plot.title
     html_above = plot.html_above
-    return render(request, 'analysis/plot.html', {'srcdoc': srcdoc, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True})
+    return render(request, 'analysis/plot.html', {'fragment': fragment, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True, 'last_quote': last_quote, 'last_pct_change': last_pct_change})
 
 class SymbolAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
