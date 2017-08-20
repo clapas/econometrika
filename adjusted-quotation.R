@@ -10,9 +10,13 @@ stmt <- dbSendQuery(con, "select * from analysis_split order by date desc")
 splits <- fetch(stmt, -1)
 dbClearResult(stmt)
 
-stmt <- dbSendQuery(con, "select * from analysis_symbol")
+args <- commandArgs()
+if (length(args) > 0) {
+    stmt <- dbSendQuery(con, "select * from analysis_symbol where ticker = $1", args[1])
+} else {
+    stmt <- dbSendQuery(con, "select * from analysis_symbol")
+}
 symbols <- fetch(stmt, -1)
-#symbols <- data.frame(id=114, ticker='REP', name='REPSOL', market='MC')
 dbClearResult(stmt)
 
 library(dygraphs)
@@ -20,7 +24,6 @@ library(htmltools)
 library(knitr)
 library(TTR)
 library(xts)
-libpath <- file.path(getwd(), './media/plotly_lib')
 bpath <- './media/'
 for (rs in rownames(symbols)) {
     symbol <- symbols[rs,]

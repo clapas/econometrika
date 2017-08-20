@@ -6,8 +6,8 @@
 {% block content %}
   <div class="container-fluid">
     <h1 class="page-header">{% block title %}{{ title }}{% endblock %}
-      <small class="well well-sm pull-right">{{ last_quote }}{% if last_pct_change > 0 %}<span class="dropup">{% endif %}
-        <span style="color: {% if last_pct_change > 0 %}green{% else %}red{% endif %}">
+      <small class="well well-sm pull-right">{{ last_quote }}{% if last_pct_change >= 0 %}<span class="dropup">{% endif %}
+        <span class="{% if last_pct_change >= 0 %}winner{% else %}loser{% endif %}">
           <span class="caret caret-lg"></span> {{ last_pct_change }}%</span>
       {% if last_pct_change < 0 %}</span><!-- .dropup -->{% endif %}</small></h1>
     {{ html_above | safe }}

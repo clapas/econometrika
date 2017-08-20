@@ -163,7 +163,8 @@ class Command(BaseCommand):
         for event, element in context:
             if 'Contenido' in element.xpath('local-name()'):
                 element.clear()
-        ctxs = root.findall('xbrli:context', root.nsmap)
+        xbrl_ns = root.prefix
+        ctxs = root.findall('%s:context' % xbrl_ns, root.nsmap)
         for ctx in ctxs:
             if ctx.get('id').endswith('_icc'): icc_ctx = ctx        # instant current consolidated
             elif ctx.get('id').endswith('_dcc'): dcc_ctx = ctx      # date-range current consolidated
@@ -183,15 +184,16 @@ class Command(BaseCommand):
             {'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'overwrite': True},
             {'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'overwrite': True},
         ]
-        self.import_common(root, finreports, root.nsmap, symbol)
+        self.import_common(root, finreports, symbol)
 
     def import_common(self, root, finreports, symbol):
+        xbrl_ns = root.prefix
         for finreport in finreports:
             try:
-                period_begin = period_end = finreport['context'].find('.//xbrli:instant', root.nsmap).text
+                period_begin = period_end = finreport['context'].find('.//%s:instant' % xbrl_ns, root.nsmap).text
             except AttributeError:
-                period_begin = finreport['context'].find('.//xbrli:startDate', root.nsmap).text
-                period_end = finreport['context'].find('.//xbrli:endDate', root.nsmap).text
+                period_begin = finreport['context'].find('.//%s:startDate' % xbrl_ns, root.nsmap).text
+                period_end = finreport['context'].find('.//%s:endDate' % xbrl_ns, root.nsmap).text
             try:
                 context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol)
                 if finreport['overwrite']:

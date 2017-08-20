@@ -131,7 +131,28 @@ class FinancialContext(models.Model):
 class FinancialFact(models.Model):
     concept = models.ForeignKey(FinancialConcept, on_delete=models.CASCADE)
     context = models.ForeignKey(FinancialContext, on_delete=models.CASCADE)
-    amount= models.FloatField()
+    amount = models.FloatField()
     class Meta:
         unique_together = ('concept', 'context')
 
+
+class PeriodReturn(models.Model):
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    ONE_DAY = '1D'
+    ONE_WEEK = '1W'
+    ONE_MONTH = '1M'
+    THREE_MONTHS = '3M'
+    SIX_MONTHS = '6M'
+    YDT = 'YTD'
+    ONE_YEAR = '1Y'
+    PERIOD_TYPE = (
+        (ONE_DAY, '1 Day'),
+        (ONE_WEEK, '1 Week'),
+        (ONE_MONTH, '1 Month'),
+        (THREE_MONTHS, '3 Months'),
+        (SIX_MONTHS, '6 Months'),
+        (YDT, 'Year to date'),
+        (ONE_YEAR, '1 Year')
+    )
+    period_type = models.CharField(max_length=24, choices=PERIOD_TYPE)
+    period_return = models.FloatField()

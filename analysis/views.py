@@ -7,8 +7,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 from datetime import datetime
 from django.http import HttpResponse
-from analysis.models import KeyValue, Plot, Symbol, SymbolQuote
+from analysis.models import KeyValue, Plot, Symbol, SymbolQuote, PeriodReturn
 from dal import autocomplete
+from collections import OrderedDict
 import locale
 
 def non_normal_stock_returns(request):
@@ -80,3 +81,22 @@ class SymbolAutocomplete(autocomplete.Select2QuerySetView):
     def get_result_value(self, result):
         return result.ticker
 
+def winners_losers(request):
+    period_returns = PeriodReturn.objects.select_related('symbol').order_by('-period_return').all()
+    period_returns_odict = OrderedDict([
+        ('1D', []),
+        ('1W', []),
+        ('1M', []),
+        ('3M', []),
+        ('6M', []),
+        ('YTD', []),
+        ('1Y', []),
+    ])
+    for perret in period_returns:
+        period_returns_odict[perret.period_type].append((perret.symbol.ticker,
+            {'name': perret.symbol.name, 'return': round(perret.period_return * 100, 2)}))
+
+    for perret in period_returns:
+        period_returns_odict[perret.period_type] = OrderedDict(period_returns_odict[perret.period_type])
+
+    return render(request, 'analysis/winners_losers.html', {'period_returns': period_returns_odict})

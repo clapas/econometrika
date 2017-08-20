@@ -1,0 +1,32 @@
+{% extends 'analysis/base.html' %}
+{% load static %}
+{% block canonical_url %}{% url 'non_normal_stock_returns' %}{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="page-header">
+      <h1>{% block title %}Ranking (cotización ajustada){% endblock %}</h1>
+    </div>
+    <div class="row seven-cols">
+      <ul class="visible-sm-block visible-xs-block">
+        {% for k, v in period_returns.items %}
+          <li><a href="#{{ k }}">{{ k }}</a></li>
+        {% endfor %}
+      </ul>
+      {% for k, v in period_returns.items %}
+        <a name="{{ k }}"></a>
+        <div class="col-md-1">
+          <table class="table table-condensed table-striped">
+            <thead><tr>
+              <th colspan="2" class="text-center">{{ k }}</th>
+            </tr></thead>
+            <tbody>
+              {% for k2, v2 in v.items %}
+                <tr><td class="text-left"><a href="{% url 'plot' k2|lower|add:'-adjusted-quote' %}"><abbr class="hiiden-sm hidden-xs" title="{{ v2.name }}">{{ k2 }}</abbr><span class="visible-sm-inline visible-xs-inline">{{ v2.name }}</span></a></td><td class="text-right {% if v2.return >= 0 %}winner{% else %}loser{% endif %}">{{ v2.return }}%</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
