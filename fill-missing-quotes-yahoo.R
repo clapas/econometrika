@@ -78,6 +78,7 @@ for (rs in rownames(symbols)) {
         }
         for (m2 in m) 
             class(m2) <- 'Date'
+            if (!as.Date(m2) %in% index(quotes_yh)) next
             stmt <- postgresqlExecStatement(con, 'insert into analysis_symbolquote (symbol_id, date, open, high, low, close, volume)
                 values($1, $2, $3, $4, $5, $6, $7)',
                 c(symbol$id, as.character(m2), quotes_yh[m2,1], quotes_yh[m2,2], quotes_yh[m2,3], quotes_yh[m2,4], quotes_yh[m2,5]))
