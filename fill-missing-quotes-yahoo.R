@@ -64,6 +64,7 @@ for (rs in rownames(symbols)) {
     stmt <- dbSendQuery(con, "select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 order by date", symbol$id)
     quotes_db <- fetch(stmt, -1)
     dbClearResult(stmt)
+    if (!nrow(quotes_db) > 0) next
     days <- seq.Date(head(quotes_db, 1)$date, tail(quotes_db, 1)$date, 1)
     days <- days[!days %in% hollydays & !weekdays(days) %in% c('sábado', 'domingo')]
     missing <- setdiff(days, quotes_db$date)
