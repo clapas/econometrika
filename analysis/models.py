@@ -121,6 +121,7 @@ class FinancialConcept(models.Model):
 
 class FinancialContext(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    root_concept = models.ForeignKey(FinancialConcept, on_delete=models.CASCADE)
     currency = models.CharField(max_length=4)
     period_begin = models.DateField()
     period_end = models.DateField()

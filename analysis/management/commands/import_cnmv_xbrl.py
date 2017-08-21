@@ -194,8 +194,9 @@ class Command(BaseCommand):
             except AttributeError:
                 period_begin = finreport['context'].find('.//%s:startDate' % xbrl_ns, root.nsmap).text
                 period_end = finreport['context'].find('.//%s:endDate' % xbrl_ns, root.nsmap).text
+            parent = FinancialConcept.objects.get(xbrl_element=finreport['parent_xbrl'])
             try:
-                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol)
+                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol, root_concept=parent)
                 if finreport['overwrite']:
                     print('Will overwrite context for %s, %s - %s. Deleting...' % (symbol.ticker, period_begin, period_end))
                     context.delete()
@@ -207,9 +208,8 @@ class Command(BaseCommand):
             except FinancialContext.DoesNotExist:
                 pass
             context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end,
-                symbol=symbol, n_shares=finreport['n_shares'])
+                symbol=symbol, n_shares=finreport['n_shares'], root_concept=parent)
             context.save()
-            parent = FinancialConcept.objects.get(xbrl_element=finreport['parent_xbrl'])
             concepts = FinancialConcept.objects.filter(parent=parent)
             for concept in concepts:
                 fact = root.find('.//%s[@contextRef="%s"]' % (concept.xbrl_element, finreport['context'].get('id')), root.nsmap)

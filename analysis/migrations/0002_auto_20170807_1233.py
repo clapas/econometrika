@@ -1607,6 +1607,7 @@ class Migration(migrations.Migration):
                 ('period_end', models.DateField()),
                 ('n_shares', models.BigIntegerField(null=True)),
                 ('symbol', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.Symbol')),
+                ('root_concept', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.FinancialConcept')),
             ],
         ),
         migrations.CreateModel(
@@ -1632,7 +1633,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='financialcontext',
-            unique_together=set([('symbol', 'period_begin', 'period_end')]),
+            unique_together=set([('symbol', 'period_begin', 'period_end', 'root_concept')]),
         ),
         migrations.RunPython(insertData, lambda *args: None),
     ]
