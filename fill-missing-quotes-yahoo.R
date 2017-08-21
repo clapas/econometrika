@@ -72,7 +72,7 @@ for (rs in rownames(symbols)) {
     print(missing)
     for (m in missing) {
         ret <- try (quotes_yh <- getSymbols(symbol$key, from=min(m), to=max(m), auto.assign=F))
-        if (inherits(ret, 'error')) {
+        if (inherits(ret, 'try-error')) {
             message(ret)
             next
         }
