@@ -93,7 +93,120 @@ def insertData(apps, schema_editor):
         'xbrl_element': 'ifrs-gp:DilutedEarningsLossPerShare',
     }]
     root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', xbrl_element='ipp-gen:CuentaPerdidasGananciasConsolidada',
-        taxonomy='http://www.cnmv.es/ipp/2008')
+        taxonomy='http://www.cnmv.es/ipp-gen/2008')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'name': 'Intereses y rendimientos asimilados',
+        'xbrl_element': 'ifrs-gp:InterestIncomeTotalFinancialInstitutions',
+    }, {
+        'name': 'Intereses y cargas asimiladas',
+        'xbrl_element': 'ifrs-gp:InterestExpenseTotalFinancialInstitutions',
+    }, {
+        'name': 'Remuneración de capital reembolsable la vista',
+        'xbrl_element': 'ipp-enc:RemuneracionCapitalReembolsableVista',
+    }, {
+        'name': 'MARGEN DE INTERESES',
+        'xbrl_element': 'ipp-enc:MargenIntereses',
+    }, {
+        'name': 'Rendimientos de instrumentos de capital',
+        'xbrl_element': 'ifrs-gp:DividendIncomeTotal',
+    }, {
+        'name': 'Resultado de entidades valoradas por el método de la participación',
+        'xbrl_element': 'es-be-fs:ResultadoEntidadesValoradasMetodoParticipacionNetoDividendosAjustesResultado',
+    }, {
+        'name': 'Comisiones percibidas',
+        'xbrl_element': 'ifrs-gp:FeesAndCommissionIncomeTotal',
+    }, {
+        'name': 'Comisiones pagadas',
+        'xbrl_element': 'ifrs-gp:FeesAndCommissionExpenseTotal',
+    }, {
+        'name': 'Resultado de operaciones financieras (neto)',
+        'xbrl_element': 'es-be-fs:ResultadosOperacionesFinancierasNeto',
+    }, {
+        'name': 'Diferencias de cambio (neto)',
+        'xbrl_element': 'ifrs-gp:GainsLossesOnFinancialInstrumentsExchangeDifferenceRevaluations',
+    }, {
+        'name': 'Otros productos de explotación',
+        'xbrl_element': 'ifrs-gp:OtherOperatingIncomeTotalFinancialInstitutions',
+    }, {
+        'name': 'Otras cargas de explotación',
+        'xbrl_element': 'ifrs-gp:OtherOperatingExpenses',
+    }, {
+        'name': 'MARGEN BRUTO',
+        'xbrl_element': 'ipp-enc:MargenBrutoNiif',
+    }, {
+        'name': 'Gastos de administración:',
+        'xbrl_element': 'ipp-enc:GastosAdministracion',
+    }, {
+        'name': 'a) Gastos de personal',
+        'xbrl_element': 'ifrs-gp:EmployeeExpensesByNature',
+    }, {
+        'name': 'b) Otros gastos generales de administración',
+        'xbrl_element': 'ifrs-gp:OtherAdministrativeExpenses',
+    }, {
+        'name': 'Amortización',
+        'xbrl_element': 'ifrs-gp:DepreciationAndAmortisation',
+    }, {
+        'name': 'Dotaciones a provisiones (neto)',
+        'xbrl_element': 'es-be-fs:DotacionesProvisionesNetoPerdidasGanancias',
+    }, {
+        'name': 'Perdidas por deterioros de activos financieros (neto)',
+        'xbrl_element': 'ifrs-gp:ImpairmentLossesReversalsFinancialInstrumentsNet',
+    }, {
+        'name': 'RESULTADO DE LA ACTIVIDAD DE EXPLOTACIÓN',
+        'xbrl_element': 'ipp-enc:ResultadoActividadExplotacionNiif',
+    }, {
+        'name': 'Pérdidas por deterioro del resto de activos (neto)',
+        'xbrl_element': 'ifrs-gp:ImpairmentLossesReversalsTangibleAndIntangibleAssetsNet',
+    }, {
+        'name': 'Ganancias/(Pérdidas) en la baja de activos no clasificados como no corrientes en venta',
+        'xbrl_element': 'ipp-enc:GananciasPerdidasBajaActivosNoClasificadosComoNoCorrientesVenta',
+    }, {
+        'name': 'Diferencia negativa en combinaciones de negocio',
+        'xbrl_element': 'ifrs-gp:NegativeGoodwillImmediatelyRecognised',
+    }, {
+        'name': 'Ganancias/(Pérdidas) de activos no corrientes en venta no clasificados como operaciones interrupidas',
+        'xbrl_element': 'ipp-enc:ResultadoActivosNoCorrientesGruposDisposicionVentaNoClasificadosOperacionesInterrumpidas',
+    }, {
+        'name': 'RESULTADO ANTES DE IMPUESTOS',
+        'xbrl_element': 'ipp-enc:ResultadoAntesImpuestosNiif',
+    }, {
+        'name': 'Impuesto sobre beneficios',
+        'xbrl_element': 'ifrs-gp:IncomeTaxExpenseIncome',
+    }, {
+        'name': 'Dotación obligatoria a obras y fondos sociales (solo Cajas de Ahorro y Cooperativas de crédito)',
+        'xbrl_element': 'ipp-enc:DotacionObligatoriaObrasFondosSociales',
+    }, {
+        'name': 'RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES CONTINUADAS',
+        'xbrl_element': 'ipp-enc:ResultadoActividadOrdinariaNiif',
+    }, {
+        'name': 'Resultado de operaciones interrumpidas (neto)',
+        'xbrl_element': 'es-be-fs:ResultadoOperacionesInterrumpidas',
+    }, {
+        'name': 'RESULTADO DEL EJERCICIO',
+        'xbrl_element': 'ipp-enc:ResultadoConsolidadoEjercicioNiif',
+    }, {
+        'name': 'a) Resultado atribuido a la entidad dominante',
+        'xbrl_element': 'ifrs-gp:ProfitLossAttributableToEquityHoldersOfParent',
+    }, {
+        'name': 'b) Resultado atribuido a intereses minoritarios',
+        'xbrl_element': 'ifrs-gp:ProfitLossAttributableToMinorityInterest',
+    }, {
+        'name': 'Básico',
+        'xbrl_element': 'ifrs-gp:BasicEarningsLossPerShare',
+    }, {
+        'name': 'Diluido',
+        'xbrl_element': 'ifrs-gp:DilutedEarningsLossPerShare',
+    }]
+    root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', xbrl_element='ipp-enc:CuentaPerdidasGananciasConsolidada',
+        taxonomy='http://www.cnmv.es/ipp-enc/2008')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -282,7 +395,215 @@ def insertData(apps, schema_editor):
         'xbrl_element': 'ipp-gen:TotalPasivoPatrimonioNetoNiif',
         'name': 'TOTAL PATRIMONIO NETO Y PASIVO (A + B + C )'
     }]
-    root = FinancialConcept(name='Balance consolidado', xbrl_element='ipp-gen:BalanceConsolidado', taxonomy='http://www.cnmv.es/ipp/2008')
+    root = FinancialConcept(name='Balance consolidado', xbrl_element='ipp-gen:BalanceConsolidado', taxonomy='http://www.cnmv.es/ipp-gen/2008')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'name': '1. Caja y deposito en bancos centrales',
+        'xbrl_element': 'ifrs-gp:CashAndBalancesWithCentralBanks',
+    }, {
+        'name': '2. Cartera de negociación',
+        'xbrl_element': 'ifrs-gp:FinancialAssetsHeldForTradingTotal',
+    }, {
+        'name': '3. Otros activos financieros a valor razonable con cambios en perdidas y ganacias',
+        'xbrl_element': 'ifrs-gp:FinancialAssetsDesignatedAsFairValueThroughProfitOrLossTotal',
+    }, {
+        'name': '4. Activos financieros disponibles para la venta',
+        'xbrl_element': 'ifrs-gp:AvailableForSaleFinancialAssetsTotal',
+    }, {
+        'name': '5. Inversiones crediticias',
+        'xbrl_element': 'ifrs-gp:LoansAndReceivablesTotal',
+    }, {
+        'name': '6. Cartera de inversión a vencimiento',
+        'xbrl_element': 'ifrs-gp:HeldToMaturityInvestmentsTotal',
+    }, {
+        'name': '7. Ajustes a activos financieros por macro-coberturas',
+        'xbrl_element': 'ifrs-gp:AssetRecognisedForFairValueChangesOfHedgedItemInPortfolioHedgeOfInterestRateRisk',
+    }, {
+        'name': '8. Derivados de cobertura',
+        'xbrl_element': 'es-be-fs:DerivadosCoberturaActivoPresentacion',
+    }, {
+        'name': '9. Activos no corrientes en venta',
+        'xbrl_element': 'ifrs-gp:NonCurrentAssetsAndDisposalGroupsHeldForSale',
+    }, {
+        'name': '10. Participaciones:',
+        'xbrl_element': 'ipp-enc:ParticipacionesNiif',
+    }, {
+        'name': 'a) Entidades asociadas',
+        'xbrl_element': 'ifrs-gp:EquityMethodAccountedInvestmentsInAssociates',
+    }, {
+        'name': 'b) Entidades multigrupo',
+        'xbrl_element': 'ifrs-gp:OtherEquityMethodAccountedInvestments',
+    }, {
+        'name': '11. Contratos de seguros vinculados a pensiones',
+        'xbrl_element': 'es-be-fs:ContratosSegurosVinculadosPensiones',
+    }, {
+        'name': '12. Activos por reaseguros:',
+        'xbrl_element': 'es-be-fs:ActivosReaseguros',
+    }, {
+        'name': '13. Activo material:',
+        'xbrl_element': 'es-be-fs:ActivoMaterialActivoPresentacion',
+    }, {
+        'name': 'a) Inmovilizado intangible',
+        'xbrl_element': 'ifrs-gp:PropertyPlantAndEquipmentNet',
+    }, {
+        'name': 'b) Inversiones inmobiliarias',
+        'xbrl_element': 'ifrs-gp:InvestmentProperty',
+    }, {
+        'name': '14. Activo intangible:',
+        'xbrl_element': 'ifrs-gp:IntangibleAssetsNet',
+    }, {
+        'name': 'a) Fondo de comercio',
+        'xbrl_element': 'ifrs-gp:GoodwillNet',
+    }, {
+        'name': 'b) Otro activo intangible',
+        'xbrl_element': 'ifrs-gp:IdentifiableIntangibleAssetsNet',
+    }, {
+        'name': '15. Activos fiscales:',
+        'xbrl_element': 'ifrs-gp:TaxAssetsTotal',
+    }, {
+        'name': 'a) AF Corrientes',
+        'xbrl_element': 'ifrs-gp:CurrentTaxReceivables',
+    }, {
+        'name': 'b) AF Diferidos',
+        'xbrl_element': 'ifrs-gp:DeferredTaxAssets',
+    }, {
+        'name': '16. Resto de activos',
+        'xbrl_element': 'ifrs-gp:OtherAssetsTotal',
+    }, {
+        'name': 'TOTAL ACTIVO',
+        'xbrl_element': 'ipp-enc:TotalActivoNiif',
+    }, {
+        'name': 'TOTAL PASIVO',
+        'xbrl_element': 'ipp-enc:TotalPasivoNiif',
+    }, {
+        'name': '1. Cartera de negociación',
+        'xbrl_element': 'ifrs-gp:FinancialLiabilitiesHeldForTradingTotal',
+    }, {
+        'name': '2. Otros pasivos financieros a valor razonable con cambios en perdidas y ganancias',
+        'xbrl_element': 'ifrs-gp:FinancialLiabilitiesDesignatedAsFairValueThroughProfitOrLossTotal',
+    }, {
+        'name': '3. Pasivos financieros a coste amortizado',
+        'xbrl_element': 'es-be-fs:PasivosFinancierosCosteAmortizadoBalance',
+    }, {
+        'name': '4. Ajustes pasivos financieros por macro-coberturas',
+        'xbrl_element': 'ifrs-gp:LiabilityRecognisedForFairValueChangesOfHedgedItemInPortfolioHedgeOfInterestRateRisk',
+    }, {
+        'name': '5. Derivados de cobertura',
+        'xbrl_element': 'es-be-fs:DerivadosCoberturaPasivoPresentacion',
+    }, {
+        'name': '6. Pasivos asociados con activos no corrientes en venta',
+        'xbrl_element': 'ifrs-gp:LiabilitiesIncludedInDisposalGroupsClassifiedAsHeldForSale',
+    }, {
+        'name': '7. Pasivos por contratos de seguros',
+        'xbrl_element': 'ipp-enc:PasivosContratosSegurosReaseguros',
+    }, {
+        'name': '8. Provisiones',
+        'xbrl_element': 'es-be-fs:Provisiones',
+    }, {
+        'name': '9. Pasivos fiscales:',
+        'xbrl_element': 'ifrs-gp:TaxLiabilitiesTotal',
+    }, {
+        'name': 'a) PF Corrientes',
+        'xbrl_element': 'ifrs-gp:CurrentTaxPayables',
+    }, {
+        'name': 'b) PF Diferidos',
+        'xbrl_element': 'ifrs-gp:DeferredTaxLiabilities',
+    }, {
+        'name': '10. Fondo de la obra social (sólo Cajas de Ahorro y Cooperativas de crédito)',
+        'xbrl_element': 'es-be-fs:FondoObraSocial',
+    }, {
+        'name': '11. Resto de pasivos',
+        'xbrl_element': 'es-be-fs:OtrosPasivos',
+    }, {
+        'name': '12. Capital reembolsable a la vista',
+        'xbrl_element': 'ipp-enc:CapitalReembolsableVista',
+    }, {
+        'name': 'TOTAL PATRIMONIO NETO',
+        'xbrl_element': 'ipp-enc:TotalPatrimonioNetoNiif',
+    }, {
+        'name': 'FONDOS PROPIOS',
+        'xbrl_element': 'ipp-enc:FondosPropiosNiif',
+    }, {
+        'name': '1. Capital/Fondo de dotación:',
+        'xbrl_element': 'es-be-fs:CapitalFondoDotacion',
+    }, {
+        'name': 'a) Escriturado',
+        'xbrl_element': 'ifrs-gp:IssuedCapital',
+    }, {
+        'name': 'b) Menos: Capital no exigido',
+        'xbrl_element': 'es-be-fs:PendienteDesembolsoNoExigido',
+    }, {
+        'name': '2. Prima de emisión',
+        'xbrl_element': 'ifrs-gp:SharePremiumTotal',
+    }, {
+        'name': '3. Reservas',
+        'xbrl_element': 'es-be-fs:ReservasFondosPropios',
+    }, {
+        'name': '4. Otros instrumentos de capital',
+        'xbrl_element': 'es-be-fs:OtrosInstrumentosCapitalFondosPropios',
+    }, {
+        'name': '5. Menos: Valores propios',
+        'xbrl_element': 'es-be-fs:ValoresPropiosBalance',
+    }, {
+        'name': '6. Resultado del ejercicio',
+        'xbrl_element': 'es-be-fs:ResultadoAtribuidoGrupoBalance',
+    }, {
+        'name': '7. Menos: Dividendos y retribuciones',
+        'xbrl_element': 'es-be-fs:MenosDividendosRetribuciones',
+    }, {
+        'name': 'AJUSTES POR VALORACIÓN',
+        'xbrl_element': 'ipp-enc:AjustesValoracionNiif',
+    }, {
+        'name': '1. Activos financieros disponibles para la venta',
+        'xbrl_element': 'ifrs-gp:AvailableForSaleReserves',
+    }, {
+        'name': '2. Coberturas de flujos de efectivo',
+        'xbrl_element': 'es-be-fs:CoberturasFlujosEfectivoBalance',
+    }, {
+        'name': '3. Coberturas de inversiones netas en negocios en el extranjero',
+        'xbrl_element': 'es-be-fs:CoberturasInversionesNetasNegociosExtranjeroBalance',
+    }, {
+        'name': '4. Diferencias de cambio',
+        'xbrl_element': 'ifrs-gp:TranslationReserves',
+    }, {
+        'name': '5. Activos no corrientes en venta',
+        'xbrl_element': 'ifrs-gp:CumulativeIncomeExpenseRelatingToNonCurrentAssetsAndDisposalGroupsHeldForSale',
+    }, {
+        'name': '6. Entidades valoradas por el método de la participación',
+        'xbrl_element': 'ipp-com:EntidadesValoradasMetodoParticipacion',
+    }, {
+        'name': '7. Resto de ajustes por valoración',
+        'xbrl_element': 'ipp-com:OtrosAjustesValoracion',
+    }, {
+        'name': 'PATRIMONIO NETO ATRIBUIDO A LA ENTIDAD DOMINANTE',
+        'xbrl_element': 'ifrs-gp:EquityAttributableToEquityHoldersOfParent',
+    }, {
+        'name': 'INTERESES MINORITARIOS',
+        'xbrl_element': 'ifrs-gp:MinorityInterest',
+    }, {
+        'name': '1. Ajustes por valoración',
+        'xbrl_element': 'ipp-enc:AjustesValoracionInteresesMinoritarios',
+    }, {
+        'name': '2. Resto',
+        'xbrl_element': 'ipp-enc:RestoInteresesMinoritarios',
+    }, {
+        'name': 'TOTAL PASIVO Y PATRIMONIO NETO',
+        'xbrl_element': 'ipp-enc:TotalPatrimonioNetoPasivoNiif',
+    }, {
+        'name': 'Riesgos contingentes',
+        'xbrl_element': 'es-be-fs:RiesgosContingentes',
+    }, {
+        'name': 'Compromisos contingentes',
+        'xbrl_element': 'es-be-fs:CompromisosContingentes',
+    }]
+    root = FinancialConcept(name='Balance consolidado', xbrl_element='ipp-enc:BalanceConsolidado', taxonomy='http://www.cnmv.es/ipp-enc/2008')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -290,78 +611,80 @@ def insertData(apps, schema_editor):
     concepts = [{
         'xbrl_element': 'ipp-mas-pat:ImporteNetoCifraNegocioNIIF',
         'name': 'Importe neto de la cifra de negocio',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosIngresosNIIF',
         'name': 'Otros ingresos',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:VariacionExistenciasProductosTerminadosOEnCursoNIIF',
         'name': 'Variación de existencias de productos terminados o en curso',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:Aprovisionamientos',
         'name': 'Aprovisionamientos',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:GastoPersonalNIIF',
         'name': 'Gastos de personal',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DotacionAmortizacion',
         'name': 'Dotación a la amortización',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosGastos',
         'name': 'Otros Gastos',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:BeneficioPerdidaExplotacion',
         'name': 'BENEFICIO/(PÉRDIDA) DE EXPLOTACIÓN',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:IngresosFinancierosNIIF',
         'name': 'Ingresos financieros',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:GastosFinancierosNIIF',
         'name': 'Gastos financieros',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DiferenciasCambioNeto',
         'name': 'Diferencias de cambio (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ResultadoVariacionesValorInstrumentosFinancierosValorRazonableNeto',
         'name': 'Resultado por variaciones de valor de instrumentos financieros a valor razonable (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ResultadoVariacionesValorActivosNoFinancierosValorRazonableNeto',
         'name': 'Resultado por variaciones de valor de activos no financieros a valor razonable (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-gen-con:ResultadoDeterioroReversionDeterioroActivosNeto',
         'name': 'Resultado por deterioro/ reversión del deterioro de activos (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ParticipacionResultadoEjercicioAsociadasNegociosConjuntosContabilicenSegunMetodoParticipacion',
         'name': 'Participación en el resultado del ejercicio de las asociadas y negocios conjuntos que se contabilicen según el método de la participación',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ResultadoEnajenacionActivosNoCorrientesValoracionActivosNoCorrientesClasificadosComoMantenidosParaVentaNoIncluidosDentroActividadesInterrumpidasNeto',
         'name': 'Resultado de la enajenación de activos no corrientes o valoración de activos no corrientes clasificados como mantenidos para la venta no incluidos dentro de las actividades interrumpidas (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrasGananciasPerdidasNeto',
         'name': 'Otras ganancias o pérdidas (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:BeneficioPerdidaAntesImpuestosActividadesContinuadas',
         'name': 'BENEFICIO/(PÉRDIDA) ANTES DE IMPUESTOS DE ACTIVIDADES CONTINUADAS',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:GastoImpuestoSobreGanancias',
         'name': 'Gasto por impuesto sobre las ganancias',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:BeneficioPerdidaEjercicioActividadesContinuadas',
         'name': 'BENEFICIO/(PÉRDIDA) DEL EJERCICIO DE ACTIVIDADES CONTINUADAS',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ResultadoDespuesImpuestosActividadesInterrumpidasNeto',
         'name': 'Resultado después de impuestos de las actividades interrumpidas (neto)',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:BeneficioPerdidaEjercicio',
         'name': 'BENEFICIO/(PÉRDIDA) DEL EJERCICIO',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:InteresesMinoritariosResultado',
         'name': 'Intereses Minoritarios',
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:BeneficioPerdidaAtribuibleTenedoresInstrumentosPatrimonioNetoDominante',
         'name': 'BENEFICIO/(PÉRDIDA) ATRIBUIBLE A TENEDORES DE INSTRUMENTOS DE PATRIMONIO NETO DE LA DOMINANTE',
     }]
-    root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp/2005',
-        xbrl_element='ipp-mas-pat:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp-gen/2005',
+        xbrl_element='ipp-gen:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -369,587 +692,1040 @@ def insertData(apps, schema_editor):
     concepts = [{
         'xbrl_element': 'ipp-mas-pat:InmovilizadoMaterialNIIF',
         'name': 'I. Inmovilizado material'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:InversionesInmobiliarias',
         'name': 'II. Inversiones inmobiliarias'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:FondoComercioNIIF',
         'name': 'III. Fondo de comercio'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosActivosIntangiblesNIIF',
         'name': 'IV. Otros activos intangibles'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivosFinancierosNoCorrientesNIIF',
         'name': 'V. Activos financieros no corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:InversionesContabilizadasAplicandoMetodoParticipacion',
         'name': 'VI. Inversiones contabilizadas aplicando el método de la participación'
-    },{ 
+    },{
         'xbrl_element': 'ipp-gen-con:ActivosBiologicosNoCorrientes',
         'name': 'VII. Activos biológicos'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivoImpuestosDiferidos',
         'name': 'VIII. Activos por impuestos diferidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosActivosNoCorrientesNIIF',
         'name': 'IX. Otros activos no corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivosNoCorrientes',
         'name': 'A) ACTIVOS NO CORRIENTES'
-    },{ 
+    },{
         'xbrl_element': 'ipp-gen-con:ActivosBiologicosCorrientes',
         'name': 'I. Activos biológicos'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ExistenciasNIIF',
         'name': 'II. Existencias'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DeudoresComercialesOtrasCuentasCobrarNIIF',
         'name': 'III. Deudores comerciales y otras cuentas a cobrar'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosActivosFinancierosCorrientesNIIF',
         'name': 'IV. Otros activos financieros corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivosImpuestosSobreGananciasCorrientes',
         'name': 'V. Activos por impuestos sobre las ganancias corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosActivosCorrientesNIIF',
         'name': 'V. Otros activos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:EfectivoOtrosMediosLiquidosEquivalentesNIIF',
         'name': 'VII. Efectivo y otros medios líquidos equivalentes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:SubtotalActivosCorrientes',
         'name': 'Subtotal activos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivosNoCorrientesClasificadosComoMantenidosParaVentaActividadesInterrumpidas',
         'name': 'IX. Activos no corrientes clasif. como mantenidos para la venta y de actividades interrumpidas'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ActivosCorrientes',
         'name': 'B) ACTIVOS CORRIENTES'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:TotalActivoNIIF',
         'name': 'TOTAL ACTIVO (A + B)'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:CapitalNIIF',
         'name': 'I. Capital'
-    },{ 
+    },{
         'xbrl_element': 'ipp-gen-con:OtrasReservas',
         'name': 'II. Otras reservas (20)'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:GananciasAcumuladas',
         'name': 'III. Ganancias acumuladas (21)'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosInstrumentosPatrimonioNetoNIIF',
         'name': 'III. Otros instrumentos de patrimonio neto'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:MenosValoresPropios',
         'name': 'V. Menos: Valores propios'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DiferenciasCambio',
         'name': 'VI. Diferencias de cambio'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosAjustesValoracion',
         'name': 'VII. Otros ajustes por valoración'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ReservasRevalorizacionActivosNoCorrientesClasificComoMantenidoParaVentaActividadesInterrumpidas',
         'name': 'VIII. Reservas de revalorización de activos no corrientes clasific. Como mantenido para la venta y de actividades interrumpidas'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:MenosDividendosCuenta',
         'name': 'IX. Menos: Dividendos a cuenta'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PatrimonioAtribuidoTenedoresInstrumentosPatrimonioNetoDominante',
         'name': 'PATRIMONIO ATRIBUIDO A TENEDORES DE INSTRUMENTOS DE PATRIMONIO NETO DE LA DOMINANTE'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:InteresesMinoritariosNIIF',
         'name': 'B) INTERESES MINORITARIOS'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PatrimonioNeto',
         'name': 'A) PATRIMONIO NETO'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:EmisionObligacionesOtrosValoresNegociablesLargoPlazoNIIF',
         'name': 'I. Emisión de obligaciones y otros valores negociables l/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DeudasEntidadesCreditoLargoPlazoNIIF',
         'name': 'II. Deudas con entidades de crédito l/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosPasivosFinancierosLargoPlazo',
         'name': 'III.Otros pasivos financieros l/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PasivosImpuestosDiferidos',
         'name': 'IV. Pasivos por impuestos diferidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ProvisionesLargoPlazo',
         'name': 'V. Provisiones l/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosPasivosNoCorrientes',
         'name': 'IV. Otros pasivos no corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PasivosNoCorrientes',
         'name': 'B) PASIVOS NO CORRIENTES'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:EmisionObligacionesOtrosValoresNegociablesCortoPlazoNIIF',
         'name': 'I. Emisión de obligaciones y otros valores negociables c/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:DeudasEntidadesCreditoCortoPlazoNIIF',
         'name': 'II. Deudas con entidades de crédito c/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:AcreedoresComercialesOtrasCuentasPagarNIIF',
         'name': 'III. Acreedores comerciales y otras cuentas a pagar'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosPasivosFinancierosCortoPlazo',
         'name': 'IV.Otros pasivos financieros c/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:ProvisionesCortoPlazo',
         'name': 'V. Provisiones c/p'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PasivosImpuestosSobreGananciasCorrientes',
         'name': 'VI. Pasivos por impuestos sobre las ganancias corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:OtrosPasivosCorrientesNIIF',
         'name': 'VII. Otros pasivos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:SubtotalPasivosCorrientes',
         'name': 'Subtotal pasivos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PasivosDirectamenteAsociadosActivosNoCorrientesClasificadosComoMantenidosParaVentaActividadesInterrumpidas',
         'name': 'VIII. Pasivos directamente asociados con activos no corrientes clasificados como mantenidos para la venta y de actividades interrumpidas'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:PasivosCorrientes',
         'name': 'C) PASIVOS CORRIENTES'
-    },{ 
+    },{
         'xbrl_element': 'ipp-mas-pat:TotalPasivoNIIF',
         'name': 'TOTAL PASIVO Y PATRIMONIO NETO (A + B + C)'
     }]
-    root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp/2005',
-        xbrl_element='ipp-mas-pat:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp-gen/2005',
+        xbrl_element='ipp-gen:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
 
-    concepts = [{ 
+    concepts = [{
+        'xbrl_element': 'ifrs-gp:CashAndBalancesWithCentralBanks',
+        'name': 'CAJA Y DEPÓSITOS EN BANCOS CENTRALES'
+    }, { 
+        'xbrl_element': 'ifrs-gp:FinancialAssetsHeldForTradingTotal',
+        'name': 'ACTIVO POR CARTERA DE NEGOCIACIÓN'
+    }, { 
+        'xbrl_element': 'ifrs-gp:FinancialAssetsDesignatedAsFairValueThroughProfitOrLossTotal',
+        'name': 'OTROS ACTIVOS FINANCIEROS A VALOR RAZONABLE CON CAMBIOS EN PÉRDIDAS Y GANANCIAS'
+    }, { 
+        'xbrl_element': 'ifrs-gp:AvailableForSaleFinancialAssetsTotal',
+        'name': 'ACTIVOS FINANCIEROS DISPONIBLES PARA LA VENTA'
+    }, { 
+        'xbrl_element': 'ifrs-gp:LoansAndReceivablesTotal',
+        'name': 'INVERSIONES CREDITICIAS'
+    }, { 
+        'xbrl_element': 'ifrs-gp:HeldToMaturityInvestmentsTotal',
+        'name': 'CARTERA DE INVERSIÓN A VENCIMIENTO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:AssetRecognisedForFairValueChangesOfHedgedItemInPortfolioHedgeOfInterestRateRisk',
+        'name': 'AJUSTES A ACTIVOS FINANCIEROS POR MACRO-COBERTURAS'
+    }, { 
+        'xbrl_element': 'es-be-fs:DerivadosCoberturaActivoPresentacion',
+        'name': 'ACTIVOS POR DERIVADOS DE COBERTURA'
+    }, { 
+        'xbrl_element': 'ifrs-gp:NonCurrentAssetsAndDisposalGroupsHeldForSale',
+        'name': 'ACTIVOS NO CORRIENTES EN VENTA'
+    }, { 
+        'xbrl_element': 'ifrs-gp:EquityMethodAccountedInvestmentsInAssociates',
+        'name': 'Inversiones contabilizadas aplicando el método de la participación'
+    }, { 
+        'xbrl_element': 'ifrs-gp:OtherEquityMethodAccountedInvestments',
+        'name': 'Entidades multigrupo'
+    }, { 
+        'xbrl_element': 'es-be-fs:ContratosSegurosVinculadosPensiones',
+        'name': 'CONTRATOS DE SEGUROS VINCULADOS A PENSIONES'
+    }, { 
+        'xbrl_element': 'es-be-fs:ActivosReaseguros',
+        'name': 'ACTIVOS POR REASEGUROS'
+    }, { 
+        'xbrl_element': 'es-be-fs:ActivoMaterialActivoPresentacion',
+        'name': 'ACTIVO MATERIAL'
+    }, { 
+        'xbrl_element': 'ifrs-gp:GoodwillNet',
+        'name': 'Fondo de comercio'
+    }, { 
+        'xbrl_element': 'ifrs-gp:IdentifiableIntangibleAssetsNet',
+        'name': 'Otro activo intangible'
+    }, { 
+        'xbrl_element': 'ifrs-gp:TaxAssetsTotal',
+        'name': 'ACTIVOS FISCALES'
+    }, { 
+        'xbrl_element': 'es-be-fs:PeriodificacionesActivoPresentacion',
+        'name': 'PERIODIFICACIONES ACTIVO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:OtherAssetsTotal',
+        'name': 'Otros activos'
+    }, { 
+        'xbrl_element': 'ifrs-gp:AssetsTotal',
+        'name': 'TOTAL ACTIVO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:FinancialLiabilitiesHeldForTradingTotal',
+        'name': 'PASIVO POR CARTERA DE NEGOCIACIÓN'
+    }, { 
+        'xbrl_element': 'ifrs-gp:FinancialLiabilitiesDesignatedAsFairValueThroughProfitOrLossTotal',
+        'name': 'OTROS PASIVOS FINANCIEROS A VALOR RAZONABLE CON CAMBIOS EN PÉRDIDAS Y GANANCIAS'
+    }, { 
+        'xbrl_element': 'es-be-fs:PasivosFinancierosValorRazonableCambiosPatrimonioNetoBalance',
+        'name': 'PASIVOS FINANCIEROS A VALOR RAZONABLE CON CAMBIOS EN PATRIMONIO NETO'
+    }, { 
+        'xbrl_element': 'es-be-fs:PasivosFinancierosCosteAmortizadoBalance',
+        'name': 'PASIVOS FINANCIEROS A COSTE AMORTIZADO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:LiabilityRecognisedForFairValueChangesOfHedgedItemInPortfolioHedgeOfInterestRateRisk',
+        'name': 'AJUSTES A PASIVOS FINANCIEROS POR MACRO-COBERTURAS'
+    }, { 
+        'xbrl_element': 'es-be-fs:DerivadosCoberturaPasivoPresentacion',
+        'name': 'PASIVOS POR DERIVADOS DE COBERTURA'
+    }, { 
+        'xbrl_element': 'ifrs-gp:LiabilitiesHeldForSale',
+        'name': 'PASIVOS ASOCIADOS CON ACTIVOS NO CORRIENTES EN VENTA'
+    }, { 
+        'xbrl_element': 'es-be-fs:PasivosContratosSeguros',
+        'name': 'PASIVOS POR CONTRATOS DE SEGUROS'
+    }, { 
+        'xbrl_element': 'es-be-fs:Provisiones',
+        'name': 'PROVISIONES'
+    }, { 
+        'xbrl_element': 'ifrs-gp:TaxLiabilitiesTotal',
+        'name': 'PASIVOS FISCALES'
+    }, { 
+        'xbrl_element': 'ifrs-gp:AccruedLiabilitiesTotal',
+        'name': 'PERIODIFICACIONES PASIVO'
+    }, { 
+        'xbrl_element': 'es-be-fs:OtrosPasivos',
+        'name': 'OTROS PASIVOS'
+    }, { 
+        'xbrl_element': 'es-be-fs:CapitalNaturalezaPasivoFinanciero',
+        'name': 'CAPITAL CON NATURALEZA DE PASIVO FINANCIERO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:LiabilitiesTotal',
+        'name': 'TOTAL PASIVO'
+    }, { 
+        'xbrl_element': 'es-be-fs:AjustesValoracion',
+        'name': 'AJUSTES POR VALORACIÓN'
+    }, { 
+        'xbrl_element': 'es-be-fs:ActivosFinancierosDisponiblesVentaAjustesValoracion',
+        'name': 'Ajuste de activos financieros disponibles para la venta'
+    }, { 
+        'xbrl_element': 'es-be-fs:PasivosFinancierosValorRazonableCambiosPatrimonioNetoBalancePatrimonioNeto',
+        'name': 'Pasivos financieros a valor razonable con cambios en el patrimonio neto'
+    }, { 
+        'xbrl_element': 'es-be-fs:CoberturasFlujosEfectivoBalance',
+        'name': 'Coberturas de los flujos de efectivo'
+    }, { 
+        'xbrl_element': 'es-be-fs:CoberturasInversionesNetasNegociosExtranjeroBalance',
+        'name': 'Coberturas de inversiones netas en negocios en el extranjero'
+    }, { 
+        'xbrl_element': 'ifrs-gp:TranslationReserves',
+        'name': 'Diferencias de cambio'
+    }, { 
+        'xbrl_element': 'ifrs-gp:CumulativeIncomeExpenseRelatingToNonCurrentAssetsAndDisposalGroupsHeldForSale',
+        'name': 'Ajuste de activos no corrientes en venta'
+    }, { 
+        'xbrl_element': 'es-be-fs:FondosPropios',
+        'name': 'FONDOS PROPIOS'
+    }, { 
+        'xbrl_element': 'es-be-fs:CapitalfondoDotacion',
+        'name': 'Capital o fondo de dotación'
+    }, { 
+        'xbrl_element': 'es-be-fs:PrimaEmision',
+        'name': 'Prima de emisión'
+    }, { 
+        'xbrl_element': 'ifrs-gp:Reserves',
+        'name': 'Reservas'
+    }, { 
+        'xbrl_element': 'es-be-fs:OtrosInstrumentosCapitalFondosPropios',
+        'name': 'Otros instrumentos de capital'
+    }, { 
+        'xbrl_element': 'es-be-fs:ValoresPropiosBalance',
+        'name': 'Menos: Valores propios'
+    }, { 
+        'xbrl_element': 'ifrs-gp:MinorityInterest',
+        'name': 'Intereses minoritarios'
+    }, { 
+        'xbrl_element': 'es-be-fs:CuotasParticipativasFondosAsociadosCajasAhorro',
+        'name': 'Cuotas participativas y fondos asociados (Cajas de Ahorros)'
+    }, { 
+        'xbrl_element': 'es-be-fs:ResultadoAtribuidoGrupoBalance',
+        'name': 'Resultado atribuido al grupo'
+    }, { 
+        'xbrl_element': 'es-be-fs:MenosDividendosRetribuciones',
+        'name': 'Menos: Dividendos y retribuciones'
+    }, { 
+        'xbrl_element': 'es-be-fs:TotalPatrimonioNeto',
+        'name': 'TOTAL PATRIMONIO NETO'
+    }, { 
+        'xbrl_element': 'ifrs-gp:EquityAndLiabilitiesTotal',
+        'name': 'TOTAL PATRIMONIO NETO Y PASIVO'
+    }, { 
+        'xbrl_element': 'es-be-fs:RiesgosContingentes',
+        'name': 'RIESGOS CONTINGENTES'
+    }, { 
+        'xbrl_element': 'es-be-fs:CompromisosContingentes',
+        'name': 'COMPROMISOS CONTINGENTES'
+    }]
+    root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp-enc/2005',
+        xbrl_element='ipp-enc:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'xbrl_element': 'ifrs-gp:InterestIncomeTotalFinancialInstitutions',
+        'name': 'INTERESES Y RENDIMIENTOS ASIMILADOS'
+    }, {
+        'xbrl_element': 'ifrs-gp:InterestExpenseTotalFinancialInstitutions',
+        'name': 'INTERESES Y CARGAS ASIMILADAS'
+    }, {
+        'xbrl_element': 'ifrs-gp:DividendIncomeTotal',
+        'name': 'RENDIMIENTO DE INSTRUMENTOS DE CAPITAL'
+    }, {
+        'xbrl_element': 'es-be-fs:MargenIntermediacion',
+        'name': 'MARGEN DE INTERMEDIACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:ShareOfProfitLossFromEquityAccountedInvestments',
+        'name': 'RESULTADOS DE ENTIDADES VALORADAS POR EL MÉTODO DE LA PARTICIPACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:FeesAndCommissionIncomeTotal',
+        'name': 'COMISIONES PERCIBIDAS'
+    }, {
+        'xbrl_element': 'ifrs-gp:FeesAndCommissionExpenseTotal',
+        'name': 'COMISIONES PAGADAS'
+    }, {
+        'xbrl_element': 'es-be-fs:ActividadSeguros',
+        'name': 'ACTIVIDAD DE SEGUROS'
+    }, {
+        'xbrl_element': 'es-be-fs:ResultadosOperacionesFinancierasNeto',
+        'name': 'RESULTADOS DE OPERACIONES FINANCIERAS (NETO)'
+    }, {
+        'xbrl_element': 'ifrs-gp:GainsLossesOnFinancialInstrumentsExchangeDifferenceRevaluations',
+        'name': 'DIFERENCIAS DE CAMBIO (NETO)'
+    }, {
+        'xbrl_element': 'es-be-fs:MargenOrdinario',
+        'name': 'MARGEN ORDINARIO'
+    }, {
+        'xbrl_element': 'es-be-fs:VentasEIngresosPrestacionServiciosNoFinancieros',
+        'name': 'VENTAS E INGRESOS POR PRESTACIÓN DE SERVICIOS NO FINANCIEROS'
+    }, {
+        'xbrl_element': 'ifrs-gp:CostOfSalesByFunction',
+        'name': 'COSTE DE VENTAS'
+    }, {
+        'xbrl_element': 'ifrs-gp:OtherOperatingIncomeTotalFinancialInstitutions',
+        'name': 'OTROS PRODUCTOS DE EXPLOTACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:EmployeeExpensesByNature',
+        'name': 'GASTOS DE PERSONAL'
+    }, {
+        'xbrl_element': 'ifrs-gp:OtherAdministrativeExpenses',
+        'name': 'OTROS GASTOS GENERALES DE ADMINISTRACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:DepreciationAndAmortisation',
+        'name': 'AMORTIZACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:OtherOperatingExpenses',
+        'name': 'OTRAS CARGAS DE EXPLOTACIÓN'
+    }, {
+        'xbrl_element': 'es-be-fs:MargenExplotacion',
+        'name': 'MARGEN DE EXPLOTACIÓN'
+    }, {
+        'xbrl_element': 'ifrs-gp:ImpairmentLossesReversalsFinancialInstrumentsNet',
+        'name': 'PÉRDIDAS POR DETERIORO DE ACTIVOS (NETO)'
+    }, {
+        'xbrl_element': 'es-be-fs:DotacionesProvisionesNetoPerdidasGanancias',
+        'name': 'DOTACIONES A PROVISIONES (NETO)'
+    }, {
+        'xbrl_element': 'es-be-fs:IngresosFinancierosActividadesNoFinancieras',
+        'name': 'INGRESOS FINANCIEROS DE ACTIVIDADES NO FINANCIERAS'
+    }, {
+        'xbrl_element': 'ifrs-gp:FinanceCostsForNonFinancialActivities',
+        'name': 'GASTOS FINANCIEROS DE ACTIVIDADES NO FINANCIERAS'
+    }, {
+        'xbrl_element': 'es-be-fs:OtrasGanancias',
+        'name': 'OTRAS GANANCIAS'
+    }, {
+        'xbrl_element': 'es-be-fs:OtrasPerdidas',
+        'name': 'OTRAS PÉRDIDAS'
+    }, {
+        'xbrl_element': 'ifrs-gp:ProfitLossBeforeTax',
+        'name': 'RESULTADO ANTES DE IMPUESTOS'
+    }, {
+        'xbrl_element': 'ifrs-gp:IncomeTaxExpenseIncome',
+        'name': 'IMPUESTO SOBRE BENEFICIOS'
+    }, {
+        'xbrl_element': 'es-be-fs:DotacionObligatoriaObrasFondosSociales',
+        'name': 'DOTACIÓN OBLIGATORIA A OBRAS Y FONDOS SOCIALES'
+    }, {
+        'xbrl_element': 'ifrs-gp:ProfitLossAfterTaxFromContinuingOperations',
+        'name': 'RESULTADO DE LA ACTIVIDAD ORDINARIA'
+    }, {
+        'xbrl_element': 'es-be-fs:ResultadoOperacionesInterrumpidas',
+        'name': 'RESULTADO DE OPERACIONES INTERRUMPIDAS (NETO)'
+    }, {
+        'xbrl_element': 'ifrs-gp:ProfitLoss',
+        'name': 'RESULTADO DEL EJERCICIO'
+    }, {
+        'xbrl_element': 'ifrs-gp:ProfitLossAttributableToMinorityInterest',
+        'name': 'RESULTADO ATRIBUIDO A LA MINORÍA'
+    }, {
+        'xbrl_element': 'ifrs-gp:ProfitLossAttributableToEquityHoldersOfParent',
+        'name': 'RESULTADO ATRIBUIDO AL GRUPO'
+    }]
+    root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp-enc/2005',
+        xbrl_element='ipp-enc:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'xbrl_element': 'ipp-mas-pat:FondoComercioNIIF',
+        'name': 'I. Fondo de comercio',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:OtrosActivosIntangiblesNIIF',
+        'name': 'II. Otros activos intangibles',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:ActivosIntangibles',
+        'name': 'A) ACTIVOS INTANGIBLES',
+    }, { 
+        'xbrl_element': 'ipp-seg:InversionesMaterialesNIIF',
+        'name': 'I. Inversiones materiales',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:InversionesInmobiliarias',
+        'name': 'II. Inversiones inmobiliarias',
+    }, { 
+        'xbrl_element': 'ipp-seg:InversionesFinancierasNIIF',
+        'name': 'III. Inversiones financieras',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:InversionesContabilizadasAplicandoMetodoParticipacion',
+        'name': 'IV. Inversiones contabilizadas aplicando el método de la participación',
+    }, { 
+        'xbrl_element': 'ipp-seg:DepositosConstituidosReaseguroAceptadoNIIF',
+        'name': 'V. Depósitos constituidos por reaseguro aceptado',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrasInversionesNIIF',
+        'name': 'VI. Otras inversiones',
+    }, { 
+        'xbrl_element': 'ipp-seg:InversionesNIIF',
+        'name': 'B) INVERSIONES',
+    }, { 
+        'xbrl_element': 'ipp-seg:InvPorCuentaTomadoresSegVidaAsumanRiesgoNIIF',
+        'name': 'C) INV. POR CUENTA TOMADORES SEG. VIDA ASUMAN RIESGO',
+    }, { 
+        'xbrl_element': 'ipp-seg:ParticipacionReaseguroProvisTecnicasNIIF',
+        'name': 'D) PARTICIPACIÓN REASEG. EN LAS PROVISIONES TÉCNICAS',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:ActivoImpuestosDiferidos',
+        'name': 'E) ACTIVOS POR IMPUESTOS DIFERIDOS',
+    }, { 
+        'xbrl_element': 'ipp-seg:CreditosSeguroDirectoReasegCoasegTomadoresMediadoresNIIF',
+        'name': 'I. Créditos seguro directo, reaseg. y coaseg. (tomadores, mediadores)',
+    }, { 
+        'xbrl_element': 'ipp-seg:CreditosSocialesOtros',
+        'name': 'II. Créditos sociales y otros',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:ActivosImpuestosSobreGananciasCorrientes',
+        'name': 'III. Activos por impuestos sobre las ganancias corrientes',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:AccionistasDesembolsosExigidos',
+        'name': 'IV. Accionistas por desembolsos exigidos',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:InmovilizadoMaterialNIIF',
+        'name': 'V. Inmovilizado material',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:EfectivoOtrosMediosLiquidosEquivalentesNIIF',
+        'name': 'VI. Efectivo y otros medios líquidos equivalentes',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:AjustesPeriodificacionActivoNIIF',
+        'name': 'VII. Ajustes por periodificación',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrosActivosNIIF',
+        'name': 'VIII. Otros activos',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:ActivosNoCorrientesClasificadosComoMantenidosParaVentaActividadesInterrumpidas',
+        'name': 'IX. Activos no corrientes clasif. como mantenidos para la venta y de actividades interrumpidas',
+    }, { 
+        'xbrl_element': 'ipp-seg:CreditosOtrosActivosPeriodificacionesNIIF',
+        'name': 'F) CRÉDITOS, OTROS ACTIVOS Y PERIODIFICACIONES',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:TotalActivoNIIF',
+        'name': 'TOTAL ACTIVO (A + B + C + D + E + F)',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:CapitalNIIF',
+        'name': 'I. Capital',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrasReservas',
+        'name': 'II. Otras reservas (13)',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:GananciasAcumuladas',
+        'name': 'III. Ganancias acumuladas (21)',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:OtrosInstrumentosPatrimonioNetoNIIF',
+        'name': 'IV. Otros instrumentos de patrimonio neto',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:MenosValoresPropiosNIIF',
+        'name': 'V. Menos: Valores propios',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:DiferenciasCambio',
+        'name': 'VI. Diferencias de cambio',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:OtrosAjustesValoracion',
+        'name': 'VII. Otros ajustes por valoración',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:ReservasRevalorizacionActivosNoCorrientesClasificComoMantenidoParaVentaActividadesInterrumpidas',
+        'name': 'VIII. Reservas de revalorización de activos no corrientes clasific. Como mantenido para la venta y de actividades interrumpidas',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:MenosDividendosCuentaNIIF',
+        'name': 'IX. Menos: Dividendos a cuenta',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:PatrimonioAtribuidoTenedoresInstrumentosPatrimonioNetoDominante',
+        'name': 'PATRIMONIO ATRIBUIDO A TENEDORES DE INSTRUMENTOS DE PATRIMONIO NETO DE LA DOMINANTE',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:InteresesMinoritariosNIIF',
+        'name': 'X INTERESES MINORITARIOS',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:PatrimonioNeto',
+        'name': 'A) PATRIMONIO NETO',
+    }, { 
+        'xbrl_element': 'ipp-seg:PasivosSubordinadosNIIF',
+        'name': 'B) PASIVOS SUBORDINADOS',
+    }, { 
+        'xbrl_element': 'ipp-seg:ProvisionesTecnicasNIIF',
+        'name': 'C) PROVISIONES TÉCNICAS',
+    }, { 
+        'xbrl_element': 'ipp-seg:ProvisTecnicasVidaSiRiesgoAsumenTomadoresNIIF',
+        'name': 'D) PROVIS. TÉCNICAS VIDA, SI RIESGO ASUMEN TOMADORES',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrasProvisionesNIIF',
+        'name': 'E) OTRAS PROVISIONES',
+    }, { 
+        'xbrl_element': 'ipp-seg:DepositosRecibidosReaseguroCedidoNIIF',
+        'name': 'F) DEPÓSITOS RECIBIDOS POR REASEGURO CEDIDO',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:PasivosImpuestosDiferidos',
+        'name': 'G) Pasivos por impuestos diferidos',
+    }, { 
+        'xbrl_element': 'ipp-seg:EmisionObligacionesOtrosValoresNegociablesNIIF',
+        'name': 'I. Emisión de obligaciones y otros valores negociables',
+    }, { 
+        'xbrl_element': 'ipp-seg:DeudasEntidadesCreditoNIIF',
+        'name': 'II. Deudas con entidades de crédito',
+    }, { 
+        'xbrl_element': 'ipp-seg:DeudasSeguroDirectoReasegCoasegMediadoresAseguradosNIIF',
+        'name': 'III. Deudas seguro directo, reaseg. y coaseg. (mediadores, asegurados)',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrosPasivosFinancieros',
+        'name': 'IV. Otros pasivos financieros',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:PasivosImpuestosSobreGananciasCorrientes',
+        'name': 'V. Pasivos por impuestos sobre las ganancias corrientes',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:AjustesPeriodificacionPasivoNIIF',
+        'name': 'VI. Ajustes por periodificación',
+    }, { 
+        'xbrl_element': 'ipp-seg-con:OtrosPasivosNIIF',
+        'name': 'VII. Otros pasivos',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:PasivosDirectamenteAsociadosActivosNoCorrientesClasificadosComoMantenidosParaVentaActividadesInterrumpidasNIIF',
+        'name': 'VIII. Pasivos directamente asociados con activos no corrientes clasif. como mantenidos para la venta y de actividades interrumpidas',
+    }, { 
+        'xbrl_element': 'ipp-seg:DeudasPeriodificacionesNIIF',
+        'name': 'H) DEUDAS Y PERIODIFICACIONES',
+    }, { 
+        'xbrl_element': 'ipp-mas-pat:TotalPasivoNIIF',
+        'name': 'TOTAL PASIVO Y PATRIMONIO NETO (A + B + C + D + E + F + G + H)',
+    }]
+    root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp-seg/2005',
+        xbrl_element='ipp-seg:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
         'xbrl_element': 'ipp_en:I1501',
         'name': 'Ingresos por intereses'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1502',
         'name': 'Gastos por intereses'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1503',
         'name': 'Gastos por capital social reembolsable a la vista'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1505',
         'name': 'A) MARGEN DE INTERESES'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1506',
         'name': 'Ingresos por dividendos'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1507',
         'name': 'Resultados de entidades valoradas por el método de la participación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1508',
         'name': 'Ingresos por comisiones'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1509',
         'name': 'Gastos por comisiones'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1510',
         'name': 'Ganancias o pérdidas al dar de baja en cuentas activos y pasivos financieros no valorados a valor razonable con cambios en resultados, netas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1511',
         'name': 'Ganancias o pérdidas por activos y pasivos financieros mantenidos para negociar, netas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1512',
         'name': 'Ganancias o pérdidas por activos y pasivos financieros designados a valor razonable con cambios en resultados, netas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1513',
         'name': 'Ganancias o pérdidas resultantes de la contabilidad de coberturas, netas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1514',
         'name': 'Diferencias de cambio, netas'
     }, {
         'xbrl_element': 'ipp_en:I1515',
         'name': 'Otros ingresos de explotación '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1516',
         'name': 'Otros gastos de explotación '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1517',
         'name': 'Ingresos de activos amparados por contratos de seguro o reaseguro'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1518',
         'name': 'Gastos de pasivos amparados por contratos de seguro o reaseguro'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1520',
         'name': 'B) MARGEN BRUTO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1521',
         'name': 'Gastos de administración:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1522',
         'name': 'a) Gastos de personal'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1523',
         'name': 'b) Otros gastos de administración'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1524',
         'name': 'Amortización'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1525',
         'name': 'Provisiones o reversión de provisiones '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1526',
         'name': 'Deterioro del valor o reversión del deterioro del valor de activos financieros no valorados a valor razonable con cambios en resultados'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1527',
         'name': 'a) Activos financieros valorados al coste'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1528',
         'name': 'b) Activos financieros disponibles para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1529',
         'name': 'c) Préstamos y partidas a cobrar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1530',
         'name': 'd) Inversiones mantenidas hasta el vencimiento'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1540',
         'name': 'C) RESULTADO DE LA ACTIVIDAD DE EXPLOTACIÓN'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1541',
         'name': 'Deterioro del valor o reversión del deterioro del valor de inversiones en negocios conjuntos o asociadas'
     }, {
         'xbrl_element': 'ipp_en:I1542',
         'name': 'Deterioro del valor o reversión del deterioro del valor de activos no financieros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1543',
         'name': 'a) Activos tangibles'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1544',
         'name': 'b) Activos intangibles'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1545',
         'name': 'c) Otros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1546',
         'name': 'Ganancias o pérdidas al dar de baja en cuentas activos no financieros y participaciones, netas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1547',
         'name': 'Fondo de comercio negativo reconocido en resultados'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1548',
         'name': 'Ganancias o pérdidas procedentes de activos no corrientes y grupos enajenables de elementos clasificados como mantenidos para la venta no admisibles como actividades interrumpidas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1550',
         'name': 'D) GANANCIAS O PÉRDIDAS ANTES DE IMPUESTOS PROCEDENTES DE LAS ACTIVIDADES CONTINUADAS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1551',
         'name': 'Gastos o ingresos por impuestos sobre las ganancias de las actividades continuadas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1560',
         'name': 'E) GANANCIAS O PÉRDIDAS DESPUÉS DE IMPUESTOS PROCEDENTES DE LAS ACTIVIDADES CONTINUADAS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1561',
         'name': 'Ganancias o pérdidas después de impuestos procedentes de actividades interrumpidas '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1570',
         'name': 'RESULTADO DEL PERIODO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1571',
         'name': 'Atribuible a intereses minoritarios (participaciones no dominantes) '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1572',
         'name': 'Atribuible a los propietarios de la dominante'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1580',
         'name': 'BENEFICIO POR ACCIÓN BÁSICO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1590',
         'name': 'BENEFICIO POR ACCIÓN DILUIDO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:CuentaPerdidasGananciasConsolidadaBeneficioPorAccion',
         'name': 'BENEFICIO POR ACCIÓN ent. banc.'
     }]
     root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp_en/2016',
         xbrl_element='ipp_en:CuentaPerdidasGananciasConsolidadaLineaElementos')
     root.save()
+    root.parent = root
+    root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
 
-    concepts = [{ 
+    concepts = [{
         'xbrl_element': 'ipp_en:I1040',
         'name': '1. Efectivo, saldos en efectivo en bancos centrales y otros depósitos a la vista'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1045',
         'name': '2. Activos financieros mantenidos para negociar'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1050',
         'name': '3. Activos financieros designados a valor razonable con cambios en resultados'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1055',
         'name': '4. Activos financieros disponibles para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1060',
         'name': '5. Préstamos y partidas a cobrar'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1065',
         'name': '6. Inversiones mantenidas hasta el vencimiento'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1070',
         'name': '7. Derivados - contabilidad de coberturas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1075',
         'name': '8. Cambios del valor razonable de los elementos cubiertos de una cartera con cobertura del riesgo de tipo de interés '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1080',
         'name': '9. Inversiones en negocios conjuntos y asociadas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1091',
         'name': 'a) Entidades multigrupo'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1092',
         'name': 'b) Entidades asociadas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1095',
         'name': '10. Activos amparados por contratos de seguro y reaseguro'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1100',
         'name': '11. Activos tangibles'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1101',
         'name': 'a) Inmovilizado material'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1102',
         'name': 'i) De uso propio'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1103',
         'name': 'ii) Cedido en arrendamiento operativo'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1104',
         'name': 'iii) Afecto a la obra social (cajas de ahorro y cooperativas de crédito)'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1105',
         'name': 'b) Inversiones inmobiliarias'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1106',
         'name': 'De las cuales: cedido en arrendamiento operativo'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1107',
         'name': 'Pro memoria: adquirido en arrendamiento financiero'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1110',
         'name': '12. Activos intangibles'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1111',
         'name': 'a) Fondo de comercio'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1112',
         'name': 'b) Otros activos intangibles'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1120',
         'name': '13. Activos por impuestos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1121',
         'name': 'a) Activos por impuestos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1122',
         'name': 'b) Activos por impuestos diferidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1130',
         'name': '14. Otros activos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1131',
         'name': 'a) Contratos de seguros vinculados a pensiones'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1132',
         'name': 'b) Existencias'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1133',
         'name': 'c) Resto de los otros activos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1140',
         'name': '15. Activos no corrientes y grupos enajenables de elementos que se han clasificado como mantenidos para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1150',
         'name': 'TOTAL ACTIVO'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1160',
         'name': '1. Pasivos financieros mantenidos para negociar'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1170',
         'name': '2. Pasivos financieros designados a valor razonable con cambios en resultados'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1175',
         'name': 'Pro memoria: pasivos subordinados'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1180',
         'name': '3. Pasivos financieros a coste amortizado'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1190',
         'name': '4. Derivados - contabilidad de coberturas '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1200',
         'name': '5. Cambios del valor razonable de los elementos cubiertos de una cartera con cobertura del riesgo de tipo de interés'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1205',
         'name': '6. Pasivos amparados por contratos de seguros'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1210',
         'name': '7. Provisiones'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1211',
         'name': 'a) Pensiones y otras obligaciones de prestaciones definidas post-empleo'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1212',
         'name': 'b) Otras retribuciones a los empleados a largo plazo'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1213',
         'name': 'c) Cuestiones procesales y litigios por impuestos pendientes '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1214',
         'name': 'd) Compromisos y garantías concedidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1215',
         'name': 'e) Restantes provisiones'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1220',
         'name': '8. Pasivos por impuestos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1221',
         'name': 'a) Pasivos por impuestos corrientes'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1223',
         'name': 'b) Pasivos por impuestos diferidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1230',
         'name': '9. Capital social reembolsable a la vista'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1240',
         'name': '10. Otros pasivos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1241',
         'name': 'De los cuales: fondo de la obra social (sólo cajas de ahorro y cooperativas de crédito)'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1250',
         'name': '11. Pasivos incluidos en grupos enajenables de elementos que se han clasificado como mantenidos para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1260',
         'name': 'TOTAL PASIVO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_en:I1270',
         'name': 'FONDOS PROPIOS'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1280',
         'name': '1. Capital'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1281',
         'name': 'a) Capital desembolsado'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1282',
         'name': 'b) Capital no desembolsado exigido'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1283',
         'name': 'Pro memoria: capital no exigido'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1290',
         'name': '2. Prima de emisión'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1300',
         'name': '3. Instrumentos de patrimonio emitidos distintos del capital'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1301',
         'name': 'a) Componente de patrimonio neto de los instrumentos financieros compuestos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1302',
         'name': 'b) Otros instrumentos de patrimonio emitidos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1310',
         'name': '4. Otros elementos de patrimonio neto '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1320',
         'name': '5. Ganancias acumuladas '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1330',
         'name': '6. Reservas de revalorización'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1340',
         'name': '7. Otras reservas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1350',
         'name': '8. Acciones propias'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1360',
         'name': '9. Resultado atribuible a los propietarios de la dominante'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1370',
         'name': '10. (-) Dividendos a cuenta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1380',
         'name': 'OTRO RESULTADO GLOBAL ACUMULADO'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1390',
         'name': '1. Elementos que no se reclasificarán en resultados'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1391',
         'name': 'a) Ganancias o (-) pérdidas actuariales en planes de pensiones de prestaciones definidas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1392',
         'name': 'b) Activos no corrientes y grupos enajenables de elementos que se han clasificado como mantenidos para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1393',
         'name': 'c) Participación en otros ingresos y gastos reconocidos de inversiones en negocios conjuntos y asociadas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1394',
         'name': 'd) Resto de ajustes de valoración'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1400',
         'name': '2. Elementos que pueden reclasificarse en resultados'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1401',
         'name': 'a) Cobertura de inversiones netas en negocios en el extranjero (porción efectiva)'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1402',
         'name': 'b) Conversión en divisas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1403',
         'name': 'c) Derivados de cobertura. Coberturas de flujos de efectivo (porción efectiva)'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1404',
         'name': 'd) Activos financieros disponibles para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1405',
         'name': 'i) Instrumentos de deuda'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1406',
         'name': 'ii) Instrumentos de patrimonio'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1407',
         'name': 'e) Activos no corrientes y grupos enajenables de elementos que se han clasificado como mantenidos para la venta'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1408',
         'name': 'f) Participación en otros ingresos y gastos reconocidos en inversiones en negocios conjuntos y asociadas'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1410',
         'name': 'INTERESES MINORITARIOS (participaciones no dominantes)'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1420',
         'name': '1. Otro resultado global acumulado'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1430',
         'name': '2. Otros elementos'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1450',
         'name': 'TOTAL PATRIMONIO NETO'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1460',
         'name': 'TOTAL PATRIMONIO NETO Y PASIVO'
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1470',
         'name': '1. Garantías concedidas  '
-    },{ 
+    },{
         'xbrl_element': 'ipp_en:I1480',
         'name': '2. Compromisos contingentes concedidos'
     },]
     root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp_en/2016',
         xbrl_element='ipp_en:BalanceConsolidadoLineaElementos')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -957,90 +1733,92 @@ def insertData(apps, schema_editor):
     concepts = [{
         'xbrl_element': 'ipp_ge:I1205',
         'name': 'Importe neto de la cifra de negocios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1206',
         'name': 'Variación de existencias de productos terminados y en curso de fabricación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1207',
         'name': 'Trabajos realizados por la empresa para su activo'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1208',
         'name': 'Aprovisionamientos'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1209',
         'name': 'Otros ingresos de explotación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1217',
         'name': 'Gastos de personal'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1210',
         'name': 'Otros gastos de explotación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1211',
         'name': 'Amortización del inmovilizado'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1212',
         'name': 'Imputación de subvenciones de inmovilizado no financiero y otras'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1214',
         'name': 'Deterioro y resultado por enajenaciones del inmovilizado'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1215',
         'name': 'Otros resultados'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1245',
         'name': 'RESULTADO DE EXPLOTACIÓN'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1250',
         'name': 'Ingresos financieros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1251',
         'name': 'Gastos financieros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1252',
         'name': 'Variación de valor razonable en instrumentos financieros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1254',
         'name': 'Diferencias de cambio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1255',
         'name': 'Deterioro y resultado por enajenaciones de instrumentos financieros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1256',
         'name': 'RESULTADO FINANCIERO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1253',
         'name': 'Resultado de entidades valoradas por el método de la participación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1265',
         'name': 'RESULTADO ANTES DE IMPUESTOS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1270',
         'name': 'Impuesto sobre beneficios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1280',
         'name': 'RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES CONTINUADAS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1285',
         'name': 'Resultado del ejercicio procedente de operaciones interrumpidas neto de impuestos'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1288',
         'name': 'RESULTADO CONSOLIDADO DEL EJERCICIO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1300',
         'name': 'a) Resultado atribuido a la entidad dominante'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1289',
         'name': 'b) Resultado atribuido a intereses minoritarios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1290',
         'name': 'BENEFICIO POR ACCIÓN BÁSICO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1295',
         'name': 'BENEFICIO POR ACCIÓN DILUIDO'
     }] 
     root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp_ge/2016',
         xbrl_element='ipp_ge:CuentaPerdidasGananciasConsolidadaLineaElementos')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -1048,316 +1826,320 @@ def insertData(apps, schema_editor):
     concepts = [{
         'xbrl_element': 'ipp_ge:I1040',
         'name': 'A) ACTIVO NO CORRIENTE'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1030',
         'name': '1. Inmovilizado intangible'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1031',
         'name': 'a) Fondo de comercio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1032',
         'name': 'b) Otro inmovilizado intangible'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1033',
         'name': '2. Inmovilizado material '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1034',
         'name': '3. Inversiones inmobiliarias '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1035',
         'name': '4. Inversiones contabilizadas aplicando el método de la participación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1036',
         'name': '5. Activos financieros no corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1037',
         'name': '6. Activos por impuesto diferido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1038',
         'name': '7. Otros activos no corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1085',
         'name': 'B) ACTIVO CORRIENTE'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1050',
         'name': '1. Activos no corrientes mantenidos para la venta '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1055',
         'name': '2. Existencias '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1060',
         'name': '3. Deudores comerciales y otras cuentas a cobrar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1061',
         'name': 'a) Clientes por ventas y prestaciones de servicios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1062',
         'name': 'b) Otros deudores '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1063',
         'name': 'c) Activos por impuesto corriente'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1070',
         'name': '4. Otros activos financieros corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1075',
         'name': '5. Otros activos corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1072',
         'name': '6. Efectivo y otros activos líquidos equivalentes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1100',
         'name': 'TOTAL ACTIVO (A + B)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1195',
         'name': 'A) PATRIMONIO NETO (A.1 + A.2 + A.3 )'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1180',
         'name': 'A.1) FONDOS PROPIOS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1171',
         'name': '1. Capital '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1161',
         'name': 'a) Capital escriturado'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1162',
         'name': 'b) Menos: Capital no exigido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1172',
         'name': '2. Prima de emisión'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1173',
         'name': '3. Reservas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1174',
         'name': '4. Menos: Acciones y participaciones en patrimonio propias'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1178',
         'name': '5. Resultados de ejercicios anteriores'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1179',
         'name': '6. Otras aportaciones de socios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1175',
         'name': '7. Resultado del ejercicio atribuido a la entidad dominante'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1176',
         'name': '8. Menos: Dividendo a cuenta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1177',
         'name': '9. Otros instrumentos de patrimonio neto '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1188',
         'name': 'A.2) OTRO RESULTADO GLOBAL ACUMULADO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1186',
         'name': '1. Partidas que no se reclasifican al resultado del ejercicio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1187',
         'name': '2. Partidas que pueden reclasificarse posteriormente al resultado del ejercicio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1181',
         'name': 'a) Activos financieros disponibles para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1182',
         'name': 'b) Operaciones de cobertura'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1184',
         'name': 'c) Diferencias de conversión'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1183',
         'name': 'd) Otros'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1189',
         'name': 'PATRIMONIO NETO ATRIBUIDO A LA ENTIDAD DOMINANTE (A.1 + A.2)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1193',
         'name': 'A.3) INTERESES MINORITARIOS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1120',
         'name': 'B) PASIVO NO CORRIENTE'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1117',
         'name': '1. Subvenciones'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1115',
         'name': '2. Provisiones no corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1116',
         'name': '3. Pasivos financieros no corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1133',
         'name': 'a) Deudas con entidades de crédito y obligaciones u otros valores negociables l/p'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1132',
         'name': 'b) Otros pasivos financieros l/p'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1118',
         'name': '4. Pasivos por impuesto diferido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1135',
         'name': '5. Otros pasivos no corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1130',
         'name': 'C) PASIVO CORRIENTE'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1121',
         'name': '1. Pasivos vinculados con activos no corrientes mantenidos para la venta '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1122',
         'name': '2. Provisiones corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1123',
         'name': '3. Pasivos financieros corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1131',
         'name': 'a) Deudas con entidades de crédito y obligaciones u otros valores negociables c/p'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1134',
         'name': 'b) Otros pasivos financieros c/p'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1124',
         'name': '4. Acreedores comerciales y otras cuentas a pagar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1125',
         'name': 'a) Proveedores'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1126',
         'name': 'b) Otros acreedores'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1127',
         'name': 'c) Pasivos por impuesto corriente'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1136',
         'name': '5. Otros pasivos corrientes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_ge:I1200',
         'name': 'TOTAL PASIVO Y PATRIMONIO NETO (A + B + C )'
     }]
     root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp_ge/2016',
         xbrl_element='ipp_ge:BalanceConsolidadoLineaElementos')
     root.save()
+    root.parent = root
+    root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
 
     concepts = [{
         'xbrl_element': 'ipp_se:I1201',
-        'name': '   1. Primas imputadas al ejercicio, netas de reaseguro'
-    }, { 
+        'name': '1. Primas imputadas al ejercicio, netas de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1202',
-        'name': '   2. Ingresos del inmovilizado material y de las inversiones'
-    }, { 
+        'name': '2. Ingresos del inmovilizado material y de las inversiones'
+    }, {
         'xbrl_element': 'ipp_se:I1203',
-        'name': '   3. Otros ingresos técnicos'
-    }, { 
+        'name': '3. Otros ingresos técnicos'
+    }, {
         'xbrl_element': 'ipp_se:I1204',
-        'name': '   4. Siniestralidad del ejercicio, neta de reaseguro'
-    }, { 
+        'name': '4. Siniestralidad del ejercicio, neta de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1205',
-        'name': '   5. Variación de otras provisiones técnicas, netas de reaseguro'
-    }, { 
+        'name': '5. Variación de otras provisiones técnicas, netas de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1206',
-        'name': '   6. Participación en beneficios y extornos'
-    }, { 
+        'name': '6. Participación en beneficios y extornos'
+    }, {
         'xbrl_element': 'ipp_se:I1207',
-        'name': '   7. Gastos de explotación netos'
-    }, { 
+        'name': '7. Gastos de explotación netos'
+    }, {
         'xbrl_element': 'ipp_se:I1209',
-        'name': '   8. Otros gastos técnicos'
-    }, { 
+        'name': '8. Otros gastos técnicos'
+    }, {
         'xbrl_element': 'ipp_se:I1210',
-        'name': '   9. Gastos del inmovilizado material y de las inversiones '
-    }, { 
+        'name': '9. Gastos del inmovilizado material y de las inversiones '
+    }, {
         'xbrl_element': 'ipp_se:I1220',
         'name': 'A) RESULTADO CUENTA TÉCNICA SEGURO NO VIDA (1+ 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1221',
-        'name': '   10. Primas imputadas al ejercicio, netas de reaseguro'
-    }, { 
+        'name': '10. Primas imputadas al ejercicio, netas de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1222',
-        'name': '   11. Ingresos del inmovilizado material y de las inversiones'
-    }, { 
+        'name': '11. Ingresos del inmovilizado material y de las inversiones'
+    }, {
         'xbrl_element': 'ipp_se:I1223',
-        'name': '   12. Ingresos de inversiones afectas a seguros en los que el tomador asume el riesgo de la inversión'
-    }, { 
+        'name': '12. Ingresos de inversiones afectas a seguros en los que el tomador asume el riesgo de la inversión'
+    }, {
         'xbrl_element': 'ipp_se:I1224',
-        'name': '   13. Otros ingresos técnicos'
-    }, { 
+        'name': '13. Otros ingresos técnicos'
+    }, {
         'xbrl_element': 'ipp_se:I1225',
-        'name': '   14. Siniestralidad del ejercicio, neta de reaseguro'
-    }, { 
+        'name': '14. Siniestralidad del ejercicio, neta de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1226',
-        'name': '   15. Variación de otras provisiones técnicas, netas de reaseguro'
-    }, { 
+        'name': '15. Variación de otras provisiones técnicas, netas de reaseguro'
+    }, {
         'xbrl_element': 'ipp_se:I1227',
-        'name': '   16. Participación en beneficios y extornos'
-    }, { 
+        'name': '16. Participación en beneficios y extornos'
+    }, {
         'xbrl_element': 'ipp_se:I1228',
-        'name': '   17. Gastos de explotación netos'
-    }, { 
+        'name': '17. Gastos de explotación netos'
+    }, {
         'xbrl_element': 'ipp_se:I1229',
-        'name': '   18. Otros gastos técnicos'
-    }, { 
+        'name': '18. Otros gastos técnicos'
+    }, {
         'xbrl_element': 'ipp_se:I1230',
-        'name': '   19. Gastos del inmovilizado material y de las inversiones '
-    }, { 
+        'name': '19. Gastos del inmovilizado material y de las inversiones '
+    }, {
         'xbrl_element': 'ipp_se:I1231',
-        'name': '   20. Gastos de inversiones afectas a seguros en los que el tenedor asume el riesgo de la inversión'
-    }, { 
+        'name': '20. Gastos de inversiones afectas a seguros en los que el tenedor asume el riesgo de la inversión'
+    }, {
         'xbrl_element': 'ipp_se:I1240',
         'name': 'B) RESULTADO CUENTA TÉCNICA SEGURO VIDA (10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1245',
         'name': 'C) RESULTADO CUENTA TÉCNICA (A + B)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1246',
-        'name': '   21. Ingresos del in. material y de las inversiones'
-    }, { 
+        'name': '21. Ingresos del in. material y de las inversiones'
+    }, {
         'xbrl_element': 'ipp_se:I1250',
-        'name': '   22. Diferencia negativa de consolidación'
-    }, { 
+        'name': '22. Diferencia negativa de consolidación'
+    }, {
         'xbrl_element': 'ipp_se:I1247',
-        'name': '   23. Gastos del in. material y de las inversiones'
-    }, { 
+        'name': '23. Gastos del in. material y de las inversiones'
+    }, {
         'xbrl_element': 'ipp_se:I1248',
-        'name': '   24. Otros ingresos'
-    }, { 
+        'name': '24. Otros ingresos'
+    }, {
         'xbrl_element': 'ipp_se:I1249',
-        'name': '   25. Otros gastos '
-    }, { 
+        'name': '25. Otros gastos '
+    }, {
         'xbrl_element': 'ipp_se:I1265',
         'name': 'E) RESULTADO ANTES DE IMPUESTOS (C + 21 + 22 + 23 + 24 + 25)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1270',
-        'name': '   26. Impuesto sobre beneficios'
-    }, { 
+        'name': '26. Impuesto sobre beneficios'
+    }, {
         'xbrl_element': 'ipp_se:I1280',
         'name': 'F) RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES CONTINUADAS (E + 26)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1285',
-        'name': '   27. Resultado del ejercicio procedente de operaciones interrumpidas neto de impuestos'
-    }, { 
+        'name': '27. Resultado del ejercicio procedente de operaciones interrumpidas neto de impuestos'
+    }, {
         'xbrl_element': 'ipp_se:I1288',
         'name': 'G) RESULTADO CONSOLIDADO DEL EJERCICIO (F + 27)'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1300',
         'name': 'a) Resultado atribuido a la entidad dominante'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1289',
         'name': 'b) Resultado atribuido a intereses minoritarios'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:CuentaPerdidasGananciasConsolidadaBeneficioPorAccion',
         'name': 'BENEFICIO POR ACCIÓN'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1290',
         'name': 'Básico'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1295',
         'name': 'Diluido'
     }]
     root = FinancialConcept(name='Cuenta de pérdidas y ganancias consolidada', taxonomy='http://www.cnmv.es/ipp_se/2016',
         xbrl_element='ipp_se:CuentaPerdidasGananciasConsolidadaLineaElementos')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -1365,219 +2147,221 @@ def insertData(apps, schema_editor):
     concepts = [{
         'xbrl_element': 'ipp_se:I1005',
         'name': '1. Efectivo y otros activos líquidos equivalentes '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1010',
         'name': '2. Activos financieros mantenidos para negociar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1015',
         'name': '3. Otros activos financieros a valor razonable con cambios en pérdidas y ganancias'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1020',
         'name': '4. Activos financieros disponibles para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1025',
         'name': '5. Préstamos y partidas a cobrar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1030',
         'name': '6. Inversiones mantenidas hasta el vencimiento '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1035',
         'name': '7. Derivados de cobertura '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1041',
         'name': '8. Participación del reaseguro en las provisiones técnicas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1045',
         'name': '9. Inmovilizado material e inversiones inmobiliarias:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1046',
         'name': 'a) Inmovilizado material'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1047',
         'name': 'b) Inversiones inmobiliarias'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1050',
         'name': '10. Inmovilizado intangible:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1051',
         'name': 'a) Fondo de comercio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1053',
         'name': 'b) Gastos de adquisición de carteras de pólizas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1052',
         'name': 'c) Otro inmovilizado intangible'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1055',
         'name': '11. Participaciones en entidades valoradas por el método de la participación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1060',
         'name': '12. Activos fiscales:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1061',
         'name': 'a) Activos por impuesto corriente'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1062',
         'name': 'b) Activos por impuestos diferido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1075',
         'name': '13. Otros activos '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1080',
         'name': '14. Activos mantenidos para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1100',
         'name': 'TOTAL ACTIVO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1170',
         'name': 'TOTAL PASIVO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1110',
         'name': '1. Pasivos financieros mantenidos para negociar'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1115',
         'name': '2. Otros pasivos financieros a valor razonable con cambios en pérdidas y ganancias'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1120',
         'name': '3. Débitos y partidas a pagar:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1121',
         'name': 'a) Pasivos subordinados'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1122',
         'name': 'b) Obligaciones y otros valores negociables'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1123',
         'name': 'c) Deudas con entidades de crédito'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1124',
         'name': 'd) Otras deudas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1130',
         'name': '4. Derivados de cobertura '
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1131',
         'name': '5. Provisiones técnicas:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1132',
         'name': 'a) Para primas no consumidas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1133',
         'name': 'b) Para riesgos en curso'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1134',
         'name': 'c) De seguros de vida'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1135',
         'name': 'd) Para prestaciones'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1136',
         'name': 'e) Para participación en beneficios y para extornos'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1137',
         'name': 'f) Otras provisiones técnicas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1140',
         'name': '6. Provisiones no técnicas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1145',
         'name': '7. Pasivos fiscales:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1146',
         'name': 'a) Pasivos por impuesto corriente'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1147',
         'name': 'b) Pasivos por impuesto diferido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1150',
         'name': '8. Resto de pasivos'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1165',
         'name': '9. Pasivos vinculados con activos mantenidos para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1195',
         'name': 'TOTAL PATRIMONIO NETO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1180',
         'name': 'FONDOS PROPIOS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1171',
         'name': '1. Capital o fondo mutual:'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1161',
         'name': 'a) Capital escriturado o fondo mutual'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1162',
         'name': 'b) Menos: Capital no exigido'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1172',
         'name': '2. Prima de emisión'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1173',
         'name': '3. Reservas'
-    }, {  
+    }, { 
         'xbrl_element': 'ipp_se:I1174',
         'name': '4. Menos: Acciones y participaciones en patrimonio propias'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1178',
         'name': '5. Resultados de ejercicios anteriores'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1179',
         'name': '6. Otras aportaciones de socios y mutualistas'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1175',
         'name': '7. Resultado del ejercicio atribuido a la entidad dominante'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1176',
         'name': '8. Menos: Dividendo a cuenta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1177',
         'name': '9. Otros instrumentos de patrimonio neto'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1188',
         'name': 'OTRO RESULTADO GLOBAL ACUMULADO'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1190',
         'name': '1. Partidas que no se reclasifican al resultado del periodo'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1183',
         'name': '2. Partidas que pueden reciclarse posteriormente al resultado del periodo'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1181',
         'name': 'a) Activos financieros disponibles para la venta'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1182',
         'name': 'b) Operaciones de cobertura'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1184',
         'name': 'c) Diferencias de cambio'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1185',
         'name': 'd) Corrección de asimetrías contables'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1186',
         'name': 'e) Entidades valoradas por el método de la participación'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1187',
         'name': 'f) Otros ajustes'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1189',
         'name': 'PATRIMONIO NETO ATRIBUIDO A LA ENTIDAD DOMINANTE'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1193',
         'name': 'INTERESES MINORITARIOS'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1191',
         'name': '1. Otro resultado global acumulado'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1192',
         'name': '2. Resto'
-    }, { 
+    }, {
         'xbrl_element': 'ipp_se:I1200',
         'name': 'TOTAL PATRIMONIO NETO Y PASIVO'
     }]
     root = FinancialConcept(name='Balance consolidado', taxonomy='http://www.cnmv.es/ipp_se/2016',
         xbrl_element='ipp_se:BalanceConsolidadoLineaElementos')
+    root.save()
+    root.parent = root
     root.save()
     for concept in concepts:
         FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
@@ -1594,7 +2378,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('taxonomy', models.CharField(max_length=128)),
                 ('name', models.CharField(max_length=256)),
-                ('xbrl_element', models.CharField(max_length=256, unique=True)),
+                ('xbrl_element', models.CharField(max_length=256)),
                 ('parent', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='analysis.FinancialConcept')),
             ],
         ),
@@ -1622,6 +2406,10 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='financialconcept',
             unique_together=set([('name', 'taxonomy')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='financialconcept',
+            unique_together=set([('xbrl_element', 'parent')]),
         ),
         migrations.AlterUniqueTogether(
             name='financialconcept',

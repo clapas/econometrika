@@ -113,11 +113,12 @@ class SymbolSearchForm(forms.Form):
 class FinancialConcept(models.Model):
     name = models.CharField(max_length=256)
     taxonomy = models.CharField(max_length=128)
-    xbrl_element = models.CharField(max_length=256, unique=True)
+    xbrl_element = models.CharField(max_length=256)
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     class Meta:
         unique_together = ('taxonomy', 'name')
         unique_together = ('taxonomy', 'xbrl_element')
+        unique_together = ('parent', 'xbrl_element')
 
 class FinancialContext(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)

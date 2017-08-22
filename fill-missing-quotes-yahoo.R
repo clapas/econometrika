@@ -70,7 +70,6 @@ for (rs in rownames(symbols)) {
     missing <- setdiff(days, quotes_db$date)
     class(missing) <- 'Date'
     missing <- tapply(missing, substring(missing, 1, 4), c)
-    print(missing)
     for (m in missing) {
         ret <- try (quotes_yh <- getSymbols(symbol$key, from=min(m), to=max(m), auto.assign=F))
         if (inherits(ret, 'try-error')) {

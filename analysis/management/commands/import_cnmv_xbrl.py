@@ -70,7 +70,7 @@ class Command(BaseCommand):
             elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro'): dpc_ctx = ctx              # date-range current accu consolidated
             elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro_ImporteMiembro'): dpc_ctx = ctx # date-range cur accu consolidated
         n_shares = {'current': None, 'previous': None}
-        if 'ipp_ge' in root.nsmap:
+        if 'ipp_ge' in root.nsmap: # general
             ns = 'ipp_ge'
             for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
                 try:
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                         float(root.find('.//ipp_ge:I1295[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
                 except:
                     n_shares[k] = None
-        elif 'ipp_en' in root.nsmap:
+        elif 'ipp_en' in root.nsmap: # entidades de crédito
             ns = 'ipp_en'
             for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
                 try:
@@ -86,7 +86,7 @@ class Command(BaseCommand):
                         float(root.find('.//ipp_ge:I1580[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
                 except:
                     n_shares[k] = None
-        elif 'ipp_se' in root.nsmap:
+        elif 'ipp_se' in root.nsmap: # seguros
             ns = 'ipp_se'
             for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
                 try:
@@ -125,8 +125,19 @@ class Command(BaseCommand):
 
         if dpac_ctx is None:
             dpac_ctx = dpfc_ctx # comparative is provided for partial (e.g. semester) statements; use the one available
-        p_and_l_xbrl = 'ipp-gen:CuentaPerdidasGananciasConsolidada'
-        bal_xbrl = 'ipp-gen:BalanceConsolidado'
+        if 'ipp-gen' in root.nsmap: # general
+            ns = 'ipp-gen'
+        elif 'ipp-enc' in root.nsmap: # entidades de crédito
+            ns = 'ipp-enc'
+        elif 'ipp-seg' in root.nsmap: # seguros
+            ns = 'ipp-seg'
+            print('ipp-seg_2008 not implemented !!!')
+            return
+        else:
+            raise Exception('Unknown type of entity')
+
+        p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidada' % ns
+        bal_xbrl = '%s:BalanceConsolidado' % ns
         divs = root.findall('.//ipp-com:DividendosPagados', root.nsmap)
         n_shares_div = 0
         # try to find out number of shares by two means: method #1 dividend_total / dividend_per_share
@@ -171,8 +182,16 @@ class Command(BaseCommand):
             elif ctx.get('id').endswith('_ipc'): ipc_ctx = ctx      # instant previous consolidated
             elif ctx.get('id').endswith('_dpc'): dpc_ctx = ctx      # date-range previous consolidated
         
-        p_and_l_xbrl = 'ipp-mas-pat:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas'
-        bal_xbrl = 'ipp-mas-pat:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas'
+        if 'ipp-gen' in root.nsmap: # general
+            ns = 'ipp-gen'
+        elif 'ipp-enc' in root.nsmap: # entidades de crédito
+            ns = 'ipp-enc'
+        elif 'ipp-seg' in root.nsmap: # seguros
+            ns = 'ipp-seg'
+        else:
+            raise Exception('Unknown type of entity')
+        p_and_l_xbrl = '%s:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas' % ns
+        bal_xbrl = '%s:BalanceSituacionGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas' % ns
         try:
             n_shares = float(root.find('.//ipp-com:AccionesOrdinariasImporteTotal', root.nsmap).text) / \
                 float(root.find('.//ipp-com:AccionesOrdinariasImportePorAccion', root.nsmap).text)
@@ -180,9 +199,9 @@ class Command(BaseCommand):
             n_shares = 0
         finreports = [
             {'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares, 'overwrite': False},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'overwrite': False},
+            #{'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'overwrite': False},
             {'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'overwrite': True},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'overwrite': True},
+            #{'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'overwrite': True},
         ]
         self.import_common(root, finreports, symbol)
 
