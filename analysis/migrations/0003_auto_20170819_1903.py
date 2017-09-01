@@ -3,8 +3,20 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+from analysis.models import Symbol
 import django.db.models.deletion
+import csv
+import os 
 
+def insertData(apps, schema_editor):
+    pp = os.path.abspath(os.path.dirname(__name__))
+    fname = os.path.join(pp, 'data', 'symbol_share_nominal.csv')
+    f = open(fname)
+    csvreader = csv.reader(f)
+    for r in csvreader:
+        symbol = Symbol.objects.get(ticker=r[0])
+        symbol.nominal = r[1]
+        symbol.save()
 
 class Migration(migrations.Migration):
 
@@ -22,8 +34,23 @@ class Migration(migrations.Migration):
                 ('symbol', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.Symbol')),
             ],
         ),
+        migrations.CreateModel(
+            name='SymbolNShares',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('n_shares', models.BigIntegerField()),
+                ('capital_share', models.FloatField()),
+                ('date', models.DateField()),
+                ('symbol', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.Symbol')),
+            ],
+        ),
+        migrations.AlterUniqueTogether(
+            name='symbolnshares',
+            unique_together=set([('symbol', 'date')]),
+        ),
         migrations.AlterUniqueTogether(
             name='financialconcept',
             unique_together=set([('taxonomy', 'xbrl_element')]),
         ),
+        migrations.RunPython(insertData, lambda *args: None),
     ]

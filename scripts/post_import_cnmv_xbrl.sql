@@ -1,0 +1,1 @@
+update analysis_financialcontext set n_shares = 62095053 from analysis_symbol sy where analysis_financialcontext.symbol_id = sy.id and fiscal_year = 2009 and period = 'S1' and symbol_id = sy.id and ticker = 'ANA';

@@ -116,19 +116,37 @@ class FinancialConcept(models.Model):
     xbrl_element = models.CharField(max_length=256)
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     class Meta:
-        unique_together = ('taxonomy', 'name')
-        unique_together = ('taxonomy', 'xbrl_element')
-        unique_together = ('parent', 'xbrl_element')
+        unique_together = (
+            ('taxonomy', 'name'),
+            ('taxonomy', 'xbrl_element'),
+            ('parent', 'xbrl_element'))
 
 class FinancialContext(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
-    root_concept = models.ForeignKey(FinancialConcept, on_delete=models.CASCADE)
+    BALANCE_SHEET = 'balance sheet'
+    PROFIT_AND_LOSS = 'profit and loss'
+    CASH_FLOW = 'cash flow'
+    REPORT_TYPE = (
+        (BALANCE_SHEET , 'Balance Sheet'),
+        (PROFIT_AND_LOSS, 'Profit and Loss'),
+        (CASH_FLOW, 'Cash Flow')
+    )
+    report_type = models.CharField(max_length=32, choices=REPORT_TYPE)
     currency = models.CharField(max_length=4)
     period_begin = models.DateField()
     period_end = models.DateField()
-    n_shares = models.BigIntegerField(null=True)
+    n_shares_xbrl = models.BigIntegerField(null=True)
+    n_shares_calc = models.BigIntegerField(null=True)
     class Meta:
-        unique_together = ('symbol', 'period_begin', 'period_end')
+        unique_together = ('symbol', 'period_begin', 'period_end', 'report_type')
+
+class SymbolNShares(models.Model):
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    n_shares = models.BigIntegerField()
+    capital_share = models.FloatField()
+    date = models.DateField()
+    class Meta:
+        unique_together = ('symbol', 'date')
 
 class FinancialFact(models.Model):
     concept = models.ForeignKey(FinancialConcept, on_delete=models.CASCADE)

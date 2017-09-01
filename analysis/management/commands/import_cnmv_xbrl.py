@@ -1,39 +1,95 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 from django.db import transaction
 from analysis.models import FinancialConcept, FinancialContext, FinancialFact, Symbol
 from lxml import etree
 import locale
 import zipfile
 import os
+import csv
+from django.db import transaction
+
+NSHARES_EQ_EPSILON = 0.2
 
 class Command(BaseCommand):
     help = 'Import financial facts from XBRL files'
 
     def add_arguments(self, parser):
         parser.add_argument('file', nargs='+', help='Specify the files to process (supported xbrl files, standalone or zipped).')
-        parser.add_argument('-w', '--overwrite', action='store_true', help='Overwrite symbol financials.')
+        parser.add_argument('-p', '--process', action='store_true', help='Process the files and do post-processing, i.e. update of number of shares, as opposed to only post-processing (default).')
 
     def handle(self, *args, **options):
-        for fname in sorted(reversed(options['file'])):
-            ticker = os.path.split(fname[:fname.find('-')])[1]
-            try:
-                symbol = Symbol.objects.get(ticker=ticker)
-            except Symbol.DoesNotExist:
-                print('Symbol for ticker %s not found' % ticker)
-                continue
-            if fname.endswith('.zip'):
-                print(fname)
-                z = zipfile.ZipFile(fname)
-                for fzname in reversed(z.namelist()):
-                    print(fzname)
-                    f = z.open(fzname)
+        symbol_ids = set()
+        if options['process']:
+            for fname in sorted(reversed(options['file'])):
+                ticker = os.path.split(fname[:fname.find('-')])[1]
+                try:
+                    symbol = Symbol.objects.get(ticker=ticker)
+                except Symbol.DoesNotExist:
+                    print('Symbol for ticker %s not found' % ticker)
+                    continue
+                if fname.endswith('.zip'):
+                    z = zipfile.ZipFile(fname)
+                    for fzname in reversed(z.namelist()):
+                        print(fzname, end=' ')
+                        f = z.open(fzname)
+                        self.do_import(f, symbol)
+                        f.close()
+                        symbol_ids.add(symbol.id)
+                elif fname.endswith('.xbrl'):
+                    print(fname, end=' ')
+                    f = open(fname, 'rb')
                     self.do_import(f, symbol)
-            elif fname.endswith('.xbrl'):
-                print(fname)
-                f = open(fname, 'rb')
-                self.do_import(f, symbol)
-            else:
-                print('Unsupported file %s. Skipping...' % fname)
+                    f.close()
+                    symbol_ids.add(symbol.id)
+                else:
+                    print('Unsupported file %s. Skipping...' % fname)
+
+        self.postprocess(symbol_ids)
+
+    def postprocess(self, symbol_ids):
+        if not len(symbol_ids) > 0:
+            symbol_ids = Symbol.objects.all().values_list('id', flat=True)
+        changed_ctxs = []
+        # fill gaps, e.g. weird or empty n_shares_calc between two with similar numbers
+        for symbol_id in symbol_ids:
+            for i in range(0, 2): # pass two times to smooth number of shares
+                ctxs = FinancialContext.objects.filter(symbol_id=symbol_id).order_by('-period_end')
+                for ctx in ctxs:
+                    try:
+                        ctx_next = FinancialContext.objects.filter(symbol=ctx.symbol, n_shares_calc__isnull=False, \
+                            period_end__gte=ctx.period_end) \
+                            .extra(where=['abs(1 - n_shares_calc / %s.) > %s' % (ctx.n_shares_calc, NSHARES_EQ_EPSILON)]) \
+                            .exclude(id=ctx.id).order_by('period_end')[0]
+                        ctx_prev = FinancialContext.objects.filter(symbol=ctx.symbol, n_shares_calc__isnull=False, \
+                            period_end__lte=ctx.period_end) \
+                            .extra(where=['abs(1 - n_shares_calc / %s.) < %s' % (ctx_next.n_shares_calc, NSHARES_EQ_EPSILON)]) \
+                            .exclude(Q(id=ctx_next.id) | Q(id=ctx.id)).order_by('-period_end')[0]
+                        if not ctx.n_shares_calc or \
+                                ctx_next.n_shares_calc > ctx.n_shares_calc and ctx_prev.n_shares_calc > ctx.n_shares_calc or \
+                                ctx_next.n_shares_calc < ctx.n_shares_calc and ctx_prev.n_shares_calc < ctx.n_shares_calc:
+                            nshares = round((ctx_prev.n_shares_calc + ctx_prev.n_shares_calc) / 2)
+                            print('    correcting n_shares_calc for %s (%s - %s), from %s to %s (symbol %s)' % \
+                                (ctx.report_type, ctx.period_begin, ctx.period_end, ctx.n_shares_calc, nshares, symbol_id))
+                            ctx.n_shares_calc = nshares
+                            changed_ctxs.append(ctx)
+                    except Exception as e:
+                        pass
+                    if not ctx.n_shares_calc:
+                        try:
+                            ctx_sameyear = FinancialContext.objects.filter(symbol=ctx.symbol, n_shares_calc__isnull=False, \
+                                period_end__year=ctx.period_end.year)[0]
+                            print('    filling empty n_shares_calc from context %s into context %s' % (ctx_sameyear.id, ctx.id))
+                            ctx.n_shares_calc = ctx_sameyear.n_shares_calc
+                            changed_ctxs.append(ctx)
+                        except Exception as e:
+                            pass
+                self.contexts_bulk_save(changed_ctxs)
+
+    @transaction.atomic
+    def contexts_bulk_save(self, contexts):
+        for context in contexts:
+            context.save()
 
     def do_import(self, f, symbol):
         context = iter(etree.iterparse(f, events=('start',), huge_tree=True))
@@ -69,41 +125,61 @@ class Command(BaseCommand):
             elif ctx.get('id').endswith('Dcur_AcumuladoActualMiembro_ImporteMiembro'): dcc_ctx = ctx # date-range current accu consolidated
             elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro'): dpc_ctx = ctx              # date-range current accu consolidated
             elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro_ImporteMiembro'): dpc_ctx = ctx # date-range cur accu consolidated
+            elif ctx.get('id').endswith('Dcur_ImportePorAccionMiembro_PeriodoActualMiembro'): dsc_ctx = ctx # date-range cur per-share
+            elif ctx.get('id').endswith('Dcur_PorcentajeSobreNominalMiembro_PeriodoActualMiembro'): dsc_pct_ctx = ctx # date-range cur per-share percent
+            elif ctx.get('id').endswith('Dpre_ImportePorAccionMiembro_PeriodoAnteriorMiembro'): dsp_ctx = ctx # date-range prev per-share
+            elif ctx.get('id').endswith('Dpre_PorcentajeSobreNominalMiembro_PeriodoAnteriorMiembro'): dsp_pct_ctx = ctx # date-range prev per-share percent
         n_shares = {'current': None, 'previous': None}
         if 'ipp_ge' in root.nsmap: # general
             ns = 'ipp_ge'
-            for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
-                try:
-                    n_shares[k] = float(root.find('.//ipp_ge:I1300[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
-                        float(root.find('.//ipp_ge:I1295[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
-                except:
-                    n_shares[k] = None
+            capital_sel = 'ipp_ge:I1171'
+            domin_earning_sel = 'ipp_ge:I1300'
+            pershare_diluted_sel = 'ipp_ge:I1295'
         elif 'ipp_en' in root.nsmap: # entidades de crédito
             ns = 'ipp_en'
-            for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
-                try:
-                    n_shares[k] = float(root.find('.//ipp_ge:I1572[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
-                        float(root.find('.//ipp_ge:I1580[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
-                except:
-                    n_shares[k] = None
+            capital_sel = 'ipp_en:I1280'
+            domin_earning_sel = 'ipp_en:I1572'
+            pershare_diluted_sel = 'ipp_en:I1580'
         elif 'ipp_se' in root.nsmap: # seguros
             ns = 'ipp_se'
-            for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
-                try:
-                    n_shares[k] = float(root.find('.//ipp_se:I1300[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text) /\
-                        float(root.find('.//ipp_se:I1295[@contextRef="%s"]' % ctx.get('id'), root.nsmap).text)
-                except:
-                    n_shares[k] = None
+            capital_sel = 'ipp_se:I1171'
+            domin_earning_sel = 'ipp_se:I1300'
+            pershare_diluted_sel = 'ipp_se:I1295'
         else:
             raise Exception('Unknown type of entity')
+
+        for k, ctxs in {
+            'current': {'pershare': dsc_ctx, 'pershare-pct': dsc_pct_ctx, 'balance': icc_ctx},
+            'previous': {'pershare': dsp_ctx, 'pershare-pct': dsp_pct_ctx, 'balance': ipac_ctx}}.items():
+            try:
+                n_shares[k] = float(root.find('.//%s[@contextRef="%s"]' % (domin_earning_sel, ctx.get('id')), root.nsmap).text) /\
+                    float(root.find('.//%s[@contextRef="%s"]' % (pershare_diluted_sel, ctx.get('id')), root.nsmap).text)
+
+            except Exception as e:
+                n_shares[k] = None
+
+        for k, ctx in {'current': dcc_ctx, 'previous': dpc_ctx}.items():
+            if not n_shares[k]:
+                try:
+                    n_shares[k] = float(root.find('.//%s[@contextRef="%s"]' % (domin_earning_sel, ctx.get('id')), root.nsmap).text) /\
+                        float(root.find('.//%s[@contextRef="%s"]' % (pershare_diluted_sel, ctx.get('id')), root.nsmap).text)
+                except:
+                    pass
+
+        if not n_shares['current'] or n_shares['current'] < 0 and n_shares['previous']: n_shares['current'] = n_shares['previous']
+        if not n_shares['previous'] or n_shares['previous'] < 0 and n_shares['current']: n_shares['previous'] = n_shares['current']
 
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidadaLineaElementos' % ns
         bal_xbrl = '%s:BalanceConsolidadoLineaElementos' % ns
         finreports = [
-            {'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares['current'], 'overwrite': False},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares['current'], 'overwrite': False},
-            {'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares['previous'], 'overwrite': True},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx,'n_shares': n_shares['previous'], 'overwrite': True},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl,
+                'context': icc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl,
+                'context': dcc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl,
+                'context': ipac_ctx, 'n_shares': n_shares['previous'], 'period': 'previous'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl,
+                'context': dpc_ctx,'n_shares': n_shares['previous'], 'period': 'previous'},
         ]
         self.import_common(root, finreports, symbol)
 
@@ -131,20 +207,19 @@ class Command(BaseCommand):
             ns = 'ipp-enc'
         elif 'ipp-seg' in root.nsmap: # seguros
             ns = 'ipp-seg'
-            print('ipp-seg_2008 not implemented !!!')
-            return
         else:
             raise Exception('Unknown type of entity')
 
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidada' % ns
         bal_xbrl = '%s:BalanceConsolidado' % ns
         divs = root.findall('.//ipp-com:DividendosPagados', root.nsmap)
-        n_shares_div = 0
+        n_shares_div = None
         # try to find out number of shares by two means: method #1 dividend_total / dividend_per_share
         for div in divs:
             try:
                 n_shares_div = float(root.find('.//ipp-com:ImporteTotal[@contextRef="%s"]' % dci_ctx.get('id'), root.nsmap).text) /\
                     float(root.find('.//ipp-com:ImportePorAccion[@contextRef="%s"]' % dci_ctx.get('id'), root.nsmap).text)
+                if n_shares_div < 0: n_shares_div = None
             except (AttributeError, ZeroDivisionError):
                 pass
         # try to find out number of shares by two means: method #2 profit_loss_total / profit_loss_per_share
@@ -159,13 +234,13 @@ class Command(BaseCommand):
         except (AttributeError, ZeroDivisionError):
             n_shares_p = None
         # keep the best guess for number of shares
-        if n_shares_c is None: n_shares_c = n_shares_div
-        if n_shares_p is None: n_shares_p = n_shares_div
+        if n_shares_c is None or n_shares_c < 0: n_shares_c = n_shares_div
+        if n_shares_p is None or n_shares_p < 0: n_shares_p = n_shares_div
         finreports = [
-            {'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares_c, 'overwrite': False},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'overwrite': False},
-            {'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares_p, 'overwrite': True},
-            {'parent_xbrl': p_and_l_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'overwrite': True},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares_p, 'period': 'previous'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'period': 'previous'},
         ]
         self.import_common(root, finreports, symbol)
 
@@ -188,6 +263,10 @@ class Command(BaseCommand):
             ns = 'ipp-enc'
         elif 'ipp-seg' in root.nsmap: # seguros
             ns = 'ipp-seg'
+        elif 'ipp-soc' in root.nsmap: # seguros
+            #ns = 'ipp-soc'
+            print('    ipp-soc not fully implemented. Skipping...')
+            return
         else:
             raise Exception('Unknown type of entity')
         p_and_l_xbrl = '%s:ResultadosGrupoConsolidadoNormasInternacionalesInformacionFinancieraAdoptadas' % ns
@@ -195,13 +274,14 @@ class Command(BaseCommand):
         try:
             n_shares = float(root.find('.//ipp-com:AccionesOrdinariasImporteTotal', root.nsmap).text) / \
                 float(root.find('.//ipp-com:AccionesOrdinariasImportePorAccion', root.nsmap).text)
+            if n_shares < 0: n_shares = None
         except (AttributeError, ZeroDivisionError):
-            n_shares = 0
+            n_shares = None
         finreports = [
-            {'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares, 'overwrite': False},
-            #{'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'overwrite': False},
-            {'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'overwrite': True},
-            #{'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'overwrite': True},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares, 'period': 'current'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'period': 'current'},
+            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'period': 'previous'},
+            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'period': 'previous'},
         ]
         self.import_common(root, finreports, symbol)
 
@@ -213,21 +293,24 @@ class Command(BaseCommand):
             except AttributeError:
                 period_begin = finreport['context'].find('.//%s:startDate' % xbrl_ns, root.nsmap).text
                 period_end = finreport['context'].find('.//%s:endDate' % xbrl_ns, root.nsmap).text
+            print('    %s (%s - %s)' % (finreport['type'], period_begin, period_end))
             parent = FinancialConcept.objects.get(xbrl_element=finreport['parent_xbrl'])
             try:
-                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol, root_concept=parent)
-                if finreport['overwrite']:
-                    print('Will overwrite context for %s, %s - %s. Deleting...' % (symbol.ticker, period_begin, period_end))
+                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol,
+                    report_type=finreport['type'])
+                if finreport['period'] == 'previous': # overwrite
                     context.delete()
                 else:
-                    context.n_shares = finreport['n_shares']
-                    context.save()
-                    print('Context for %s, %s - %s already exists. Skipping...' % (symbol.ticker, period_begin, period_end))
                     continue # the context already exists; do not overwrite
             except FinancialContext.DoesNotExist:
                 pass
+
+            if finreport['n_shares'] and finreport['n_shares'] > 0: nshares = finreport['n_shares']
+            else: nshares = None
+
             context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end,
-                symbol=symbol, n_shares=finreport['n_shares'], root_concept=parent)
+                symbol=symbol, n_shares_xbrl=nshares, n_shares_calc=nshares, report_type=finreport['type'])
+            print('        saving... (%s shares)' % nshares)
             context.save()
             concepts = FinancialConcept.objects.filter(parent=parent)
             for concept in concepts:

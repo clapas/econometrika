@@ -12,7 +12,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         curdir = os.path.dirname(os.path.realpath(__file__))
         path = os.path.normpath(os.path.join(curdir, os.pardir, os.pardir, os.pardir, 'data', 'splits.csv'))
-        splits = csv.reader(open(path))
+        f = open(path)
+        splits = csv.reader(f)
         ss = []
         for row in splits:
             try:
@@ -23,4 +24,5 @@ class Command(BaseCommand):
 
         Split.objects.bulk_create(ss)
         self.stdout.write(self.style.SUCCESS('Successfully imported splits'))
+        f.close()
 
