@@ -42,6 +42,7 @@ class SymbolQuote(models.Model):
     high = models.FloatField(null=True)
     low = models.FloatField(null=True)
     close = models.FloatField()
+    close_unadj = models.FloatField(null=True)
     volume = models.FloatField(null=True)
     class Meta:
         unique_together = ('symbol', 'date')
@@ -80,9 +81,8 @@ class Dividend(models.Model):
     ex_date = models.DateField()
     gross = models.FloatField()
     net = models.FloatField(null=True)
+    year = models.IntegerField(null=True)
     type = models.CharField(max_length=32, blank=True)
-    class Meta:
-        unique_together = ('symbol', 'ex_date')
 
 class SymbolSource(models.Model):
     name = models.CharField(max_length=32)

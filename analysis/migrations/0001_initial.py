@@ -120,6 +120,7 @@ class Migration(migrations.Migration):
                 ('high', models.FloatField(null=True)),
                 ('low', models.FloatField(null=True)),
                 ('close', models.FloatField()),
+                ('close_unadj', models.FloatField(null=True)),
                 ('volume', models.FloatField(null=True)),
                 ('symbol', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.Symbol')),
             ],
@@ -154,10 +155,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='plot',
             unique_together=set([('lang_code', 'slug')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='dividend',
-            unique_together=set([('symbol', 'ex_date')]),
         ),
         migrations.CreateModel(
             name='Split',

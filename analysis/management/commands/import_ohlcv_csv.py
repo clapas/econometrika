@@ -13,10 +13,11 @@ class Command(BaseCommand):
         if options['ticker']:
             symbols = [Symbol.objects.get(ticker=options['ticker'])]
         else:
-            symbols = Symbol.objects.all()
+            symbols = Symbol.objects.all().order_by('ticker')
         curdir = os.path.dirname(os.path.realpath(__file__))
         for symbol in symbols:
-            path = os.path.normpath(os.path.join(curdir, os.pardir, os.pardir, os.pardir, 'data', '%s.csv' % symbol.ticker))
+            path = os.path.normpath(os.path.join(curdir, os.pardir, os.pardir, os.pardir, 'data', 'ohlcv', '%s.csv' % symbol.ticker))
+            print('Importing %s' % path)
             try:
                 c = CopyMapping(
                     # Give it the model

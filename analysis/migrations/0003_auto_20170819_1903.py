@@ -34,6 +34,11 @@ class Migration(migrations.Migration):
                 ('symbol', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='analysis.Symbol')),
             ],
         ),
+        migrations.AddField(
+            model_name='dividend',
+            name='year',
+            field=models.IntegerField(null=True),
+        ),
         migrations.CreateModel(
             name='SymbolNShares',
             fields=[
