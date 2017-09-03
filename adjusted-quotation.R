@@ -11,8 +11,8 @@ splits <- fetch(stmt, -1)
 dbClearResult(stmt)
 
 args <- commandArgs()
-if (length(args) > 0) {
-    stmt <- dbSendQuery(con, "select * from analysis_symbol where ticker = $1", args[1])
+if (length(args) > 1) {
+    stmt <- dbSendQuery(con, "select * from analysis_symbol where ticker = $1", args[2])
 } else {
     stmt <- dbSendQuery(con, "select * from analysis_symbol")
 }
@@ -32,29 +32,6 @@ for (rs in rownames(symbols)) {
     dbClearResult(stmt)
     if (nrow(quotes) == 0) next
     print(paste0('Generating for ', symbol$name))
-    stmt <- dbSendQuery(con, "select d.* from analysis_dividend d where d.symbol_id = $1 order by ex_date desc", symbol$id)
-    dividends <- fetch(stmt, -1)
-    dbClearResult(stmt)
-    symbol_splits = splits[splits$symbol == symbol$id,]
-    for (r in rownames(symbol_splits)) {
-        split <- symbol_splits[r,]
-        dividends[dividends$ex_date < split$date,]$gross <- dividends[dividends$ex_date < split$date,]$gross * split$proportion
-    }
-    for (r in rownames(dividends)) {
-        dividend <- dividends[r,]
-        ex_date <- dividend$ex_date
-        ex_date_index <- NA
-        j <- 0
-        if (ex_date > tail(quotes, 1)$date) next
-        while (is.na(ex_date_index)) {
-            ex_date_index <- match(ex_date + j, quotes$date)
-            j <- j + 1
-        }
-        m <- quotes$close[ex_date_index] / (quotes$close[ex_date_index] + dividend$gross)
-        quotes$close <- c(round(quotes$close[quotes$date < ex_date] * m, 3), quotes$close[quotes$date >= ex_date])
-        quotes$low <- c(round(quotes$low[quotes$date < ex_date] * m, 3), quotes$low[quotes$date >= ex_date])
-        quotes$high <- c(round(quotes$high[quotes$date < ex_date] * m, 3), quotes$high[quotes$date >= ex_date])
-    }
     date <- quotes$date
     quotes <- xts(quotes[, c('open', 'high', 'low', 'close', 'volume')], quotes$date)
     colnames(quotes) <- c('Open', 'High', 'Low', 'Close', 'Volume')
