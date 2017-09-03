@@ -58,6 +58,7 @@ class Plot(models.Model):
     html_above = models.TextField(blank=True, default='')
     lang_code = models.ForeignKey(Lang, on_delete=models.CASCADE)
     symbol = models.ForeignKey(Symbol, null=True, on_delete=models.SET_NULL)
+    lib = models.CharField(max_length=12, default='dygraphs')
     STATISTIC = 'statistic'
     QUOTE = 'quote'
     PLOT_TYPE = (

@@ -57,8 +57,8 @@ for (rs in rownames(symbols)) {
     end.rcode-->', output=wpath)
     stmt <- postgresqlExecStatement(con, 'delete from analysis_plot where slug = $1', slug)
     dbClearResult(stmt)
-    stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above) values ($1, $2, $3, $4, $5, $6, $7)',
-        c(wpath, slug, paste0(symbol$name, ': cotización ajustada'), 'es', symbol$id, 'quote', ''))
+    stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above, lib) values ($1, $2, $3, $4, $5, $6, $7, \'dygraphs\')',
+        c(wpath, slug, paste0(substring(symbol$name, 1, 42), ': cotización ajustada'), 'es', symbol$id, 'quote', ''))
     dbClearResult(stmt)
     print(paste0('Done with ', symbol$name))
 }

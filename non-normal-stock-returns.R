@@ -1,4 +1,5 @@
 library(RPostgreSQL)
+driver <- PostgreSQL()
 host <- Sys.getenv('HOST', 'localhost')
 dbname <- Sys.getenv('DATABASE_NAME', 'econometrika')
 dbuser <- Sys.getenv('DATABASE_USER')
@@ -18,7 +19,7 @@ htmlwidgets::saveWidget(ply, wpath, libdir=libpath, selfcontained=F)
 slug <- 'ibex35-daily-rate'
 stmt <- postgresqlExecStatement(con, 'delete from analysis_plot where slug = $1', slug)
 dbClearResult(stmt)
-stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above) values ($1, $2, $3, $4, $5, $6, $7)',
+stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above, lib) values ($1, $2, $3, $4, $5, $6, $7, \'plotly\')',
     c(wpath, slug, 'Cambio diario del IBEX 35', 'es', head(ibex35$symbol_id, 1), 'statistic', ''))
 dbClearResult(stmt)
 ggsave('ibex35-daily-rate.png', p + theme(text = element_text(size=6)) + geom_text(hjust='right', data=subset(ibex35, rate %in% c(min(rate), max(rate))), size=1.5, aes(x=date, y=rate, label=paste(date, ': ', round(exp(rate)*100-100, 2), '% ', sep=''))), 'png', 'media', height=55, units=c("mm"))
@@ -69,7 +70,7 @@ htmlwidgets::saveWidget(sp, wpath, libdir=libpath, selfcontained=F)
 slug <- 'ibex35-daily-rate-normality'
 stmt <- postgresqlExecStatement(con, 'delete from analysis_plot where slug = $1', slug)
 dbClearResult(stmt)
-stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above) values ($1, $2, $3, $4, $5, $6, $7)',
+stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above, lib) values ($1, $2, $3, $4, $5, $6, $7, \'plotly\')',
     c(wpath, slug, 'Retorno del IBEX 35 como distribución Normal', 'es', head(ibex35$symbol_id, 1), 'statistic', ''))
 dbClearResult(stmt)
 source('multiplot.R')
@@ -88,7 +89,7 @@ htmlwidgets::saveWidget(sp, wpath, libdir=libpath, selfcontained=F)
 slug <- 'ibex35-daily-rate-laplacity'
 stmt <- postgresqlExecStatement(con, 'delete from analysis_plot where slug = $1', slug)
 dbClearResult(stmt)
-stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above) values ($1, $2, $3, $4, $5, $6, $7)',
+stmt <- postgresqlExecStatement(con, 'insert into analysis_plot (file_path, slug, title, lang_code_id, symbol_id, type, html_above, lib) values ($1, $2, $3, $4, $5, $6, $7, \'plotly\')',
     c(wpath, slug, 'Retorno del IBEX 35 como distribución de Laplace', 'es', head(ibex35$symbol_id, 1), 'statistic', ''))
 dbClearResult(stmt)
 png('media/ibex35-daily-rate-laplacity.png', width=2100, units='px', height=649)

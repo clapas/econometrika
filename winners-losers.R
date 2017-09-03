@@ -6,10 +6,6 @@ dbuser <- Sys.getenv('DATABASE_USER')
 dbpass <- Sys.getenv('DATABASE_PASSWORD')
 con <- dbConnect(driver, host=host, dbname=dbname, user=dbuser, password=dbpass)
 
-stmt <- dbSendQuery(con, "select * from analysis_split order by date desc")
-splits <- fetch(stmt, -1)
-dbClearResult(stmt)
-
 args <- commandArgs()
 all_deleted <- FALSE
 min_date <- Sys.Date() - 4
@@ -46,7 +42,7 @@ for (rs in rownames(symbols)) {
         union
         select * from (select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 and date <= $2::date - interval '6 months' and date >= $2 - interval '8 months' order by date desc  limit 1) s5
         union
-        select * from (select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 and date <= date_trunc('year', $2) and date >= $2 - interval '1.5 year'  order by date asc limit 1) s6
+        select * from (select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 and date <= date_trunc('year', $2) and date >= $2 - interval '1.5 year'  order by date desc limit 1) s6
         union
         select * from (select sq.* from analysis_symbolquote sq where sq.symbol_id  = $1 and date <= $2::date - interval '1 year' and date >= $2 - interval '1.5 year' order by date desc limit 1) s7
         order by date asc
@@ -55,27 +51,6 @@ for (rs in rownames(symbols)) {
     dbClearResult(stmt)
     if (nrow(quotes) == 0) next
     print(paste0('Generating for ', symbol$name))
-    stmt <- dbSendQuery(con, "select d.* from analysis_dividend d where d.symbol_id = $1 and ex_date >= $2::date - interval '1.5 year' order by ex_date desc", c(symbol$id, as.character(min_date)))
-    dividends <- fetch(stmt, -1)
-    dbClearResult(stmt)
-    symbol_splits = splits[splits$symbol == symbol$id,]
-    for (r in rownames(symbol_splits)) {
-        split <- symbol_splits[r,]
-        dividends[dividends$ex_date < split$date,]$gross <- dividends[dividends$ex_date < split$date,]$gross * split$proportion
-    }
-    for (r in rownames(dividends)) {
-        dividend <- dividends[r,]
-        ex_date <- dividend$ex_date
-        ex_date_index <- NA
-        j <- 0
-        if (ex_date > tail(quotes, 1)$date) next
-        while (is.na(ex_date_index)) {
-            ex_date_index <- match(ex_date + j, quotes$date)
-            j <- j + 1
-        }
-        m <- quotes$close[ex_date_index] / (quotes$close[ex_date_index] + dividend$gross)
-        quotes$close <- c(round(quotes$close[quotes$date < ex_date] * m, 3), quotes$close[quotes$date >= ex_date])
-    }
     period_returns <- round(c(
         ifelse(nrow(quotes) > 1, tail(quotes, 1)$close / head(tail(quotes, 2), 1)$close - 1, NA),
         ifelse(nrow(quotes) > 2, tail(quotes, 1)$close / head(tail(quotes, 3), 1)$close - 1, NA),

@@ -8,7 +8,7 @@ from time import sleep
 
 skip = ['CDR', 'COL', 'ENG', 'VOC', 'ENC', 'BDL']
 
-f = open('data/cnmv_tickers.csv')
+f = open('data/mercado_continuo.csv')
 csvr = csv.reader(f)
 #url_tpl = 'http://www.expansion.com/app/bolsa/datos/historico_mensual.html?cod=M.{ticker}&anyo={year}&mes={month}'
 url_tpl = 'http://www.expansion.com/app/bolsa/datos/historico_mensual.html?cod={ticker}&anyo={year}&mes={month}'
@@ -16,7 +16,7 @@ url_tpl = 'http://www.expansion.com/app/bolsa/datos/historico_mensual.html?cod={
 next(csvr)
 #got_to_ams = False
 #for r in csvr:
-for r in [['NEBIO']]:
+for r in [['I.IB']]:
     #if r[0] == 'AMS': got_to_ams = True
     #if not got_to_ams: continue
     #if r[0] in skip: continue
