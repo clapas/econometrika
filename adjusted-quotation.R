@@ -10,9 +10,9 @@ stmt <- dbSendQuery(con, "select * from analysis_split order by date desc")
 splits <- fetch(stmt, -1)
 dbClearResult(stmt)
 
-args <- commandArgs()
-if (length(args) > 1) {
-    stmt <- dbSendQuery(con, "select * from analysis_symbol where ticker = $1", args[2])
+args <- commandArgs(trailingOnly=T)
+if (length(args) > 0) {
+    stmt <- dbSendQuery(con, "select * from analysis_symbol where ticker = $1", args[1])
 } else {
     stmt <- dbSendQuery(con, "select * from analysis_symbol")
 }

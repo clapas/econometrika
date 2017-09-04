@@ -6,13 +6,13 @@ dbuser <- Sys.getenv('DATABASE_USER')
 dbpass <- Sys.getenv('DATABASE_PASSWORD')
 con <- dbConnect(driver, host=host, dbname=dbname, user=dbuser, password=dbpass)
 
-args <- commandArgs()
+args <- commandArgs(trailingOnly=T)
 all_deleted <- FALSE
 min_date <- Sys.Date() - 4
 
-if (length(args) > 1) {
-    stmt <- dbSendQuery(con, "select sy.*, q.last_date from analysis_symbol sy join (select symbol_id, max(date) as last_date from analysis_symbolquote group by symbol_id) q on symbol_id = sy.id where ticker = $1", args[2])
-    min_date <- ifelse(!is.na(args[3]), as.Date(args[3]), min_date)
+if (length(args) > 0) {
+    stmt <- dbSendQuery(con, "select sy.*, q.last_date from analysis_symbol sy join (select symbol_id, max(date) as last_date from analysis_symbolquote group by symbol_id) q on symbol_id = sy.id where ticker = $1", args[1])
+    min_date <- ifelse(!is.na(args[2]), as.Date(args[2]), min_date)
     class(min_date) <- 'Date'
 } else {
     stmt <- postgresqlExecStatement(con, 'delete from analysis_periodreturn')
