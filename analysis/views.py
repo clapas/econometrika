@@ -58,6 +58,7 @@ def plot(request, name):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     plot = Plot.objects.get(slug=name)
     if plot.symbol_id:
+        symbol = Symbol.objects.get(id=plot.symbol_id)
         last_two_quotes = SymbolQuote.objects.filter(symbol_id=plot.symbol_id).order_by('-date')[:2]
         last_pct_change = round((last_two_quotes[0].close / last_two_quotes[1].close - 1) * 100, 2)
         last_quote = last_two_quotes[0].close
@@ -67,7 +68,7 @@ def plot(request, name):
     title = plot.title
     html_above = plot.html_above
     if plot.lib == 'dygraphs':
-        return render(request, 'analysis/plot_dy.html', {'fragment': fragment, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True, 'last_quote': last_quote, 'last_pct_change': last_pct_change})
+        return render(request, 'analysis/plot_dy.html', {'fragment': fragment, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True, 'last_quote': last_quote, 'last_pct_change': last_pct_change, 'ticker': symbol.ticker})
     else: # plotly
         srcdoc = fragment.replace('plotly_lib', '/media/plotly_lib')
         return render(request, 'analysis/plot_ly.html', {'srcdoc': srcdoc, 'title': title, 'html_above': html_above, 'plot_page': True, 'container_fluid': True})

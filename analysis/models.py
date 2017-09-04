@@ -44,6 +44,7 @@ class SymbolQuote(models.Model):
     close = models.FloatField()
     close_unadj = models.FloatField(null=True)
     volume = models.FloatField(null=True)
+    time = models.TimeField(null=True)
     class Meta:
         unique_together = ('symbol', 'date')
 

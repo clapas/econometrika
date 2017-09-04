@@ -111,7 +111,7 @@ HTMLWidgets.widget({
             attrs.interactionModel = Dygraph.Interaction.defaultModel;
           // disable y touch direction
           attrs.interactionModel.touchstart = function(event, dygraph, context) {
-            Dygraph.defaultInteractionModel.touchstart(event, dygraph, context);
+            //Dygraph.defaultInteractionModel.touchstart(event, dygraph, context);
             context.touchDirections = { x: true, y: false };
           };
         }

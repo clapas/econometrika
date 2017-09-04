@@ -5,11 +5,11 @@
 {% endblock %}
 {% block content %}
   <div class="container-fluid">
-    <h1 class="page-header">{% block title %}{{ title }}{% endblock %}
-      <small class="well well-sm pull-right">{{ last_quote }}{% if last_pct_change >= 0 %}<span class="dropup">{% endif %}
+    <h1 class="well well-sm text-center">{{ ticker }} {{ last_quote }}{% if last_pct_change >= 0 %}<span class="dropup">{% endif %}
         <span class="{% if last_pct_change >= 0 %}winner{% else %}loser{% endif %}">
           <span class="caret caret-lg"></span> {{ last_pct_change }}%</span>
-      {% if last_pct_change < 0 %}</span><!-- .dropup -->{% endif %}</small></h1>
+      {% if last_pct_change < 0 %}</span><!-- .dropup -->{% endif %}</h1>
+    <h2 class="page-header">{% block title %}{{ title }}{% endblock %}</h2>
     {{ html_above | safe }}
     {{ fragment | safe }}
   </div>
