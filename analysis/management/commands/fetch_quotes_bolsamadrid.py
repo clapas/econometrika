@@ -170,7 +170,7 @@ class Command(BaseCommand):
         'RENTA CORP.': 'REN',
         'REPSOL': 'REP',
         'REYAL URBIS': 'REY',
-        'ROVI': 'ROV',
+        'ROVI': 'ROVI',
         'SACYR': 'SCYR',
         'SAETA YIELD': 'SAY',
         'SAN JOSE': 'GSJ',
