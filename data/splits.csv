@@ -68,6 +68,7 @@ DIA,Atresmedia,2005-04-27,0.25
 ADV,"Adveo Group Internacional sa",1998-09-14,0.5
 QBT,Quabit,2016-05-12,50
 GRF,Grifols,2016-01-04,0.5
+GRF.P,Grifols,2016-01-04,0.5
 DGI,Dogi,2014-04-23,10
 EZE,"Grupo Ezentis",2013-12-16,4
 CASH,Prosegur,2012-07-06,0.1
@@ -82,11 +83,13 @@ SPS,"Service Point",2005-05-09,10
 ACX,Acerinox,2004-07-26,0.25
 SGRE,Gamesa,2004-06-07,0.33
 ABG,Abengoa,2001-07-26,0.25
+ABG.P,Abengoa,2001-07-26,0.25
 IDR,Indra,2000-10-02,0.5
 SPS,"Service Point",1999-11-29,0.05
 ZOT,Zardoya,1999-09-10,0.5
 EZE,"Grupo Ezentis",1999-09-03,0.33
 ABG,Abengoa,1998-07-27,0.33
+ABG.P,Abengoa,1998-07-27,0.33
 FAE,Faes,1998-07-27,0.25
 SCYR,Sacyr,1998-07-20,0.33
 NYE,Nyesa,1998-07-13,0.2
@@ -114,3 +117,4 @@ TRG,"Tubos Reunidos",2007-10-08,0.25
 VID,Vidrala,1997-05-12,0.5
 VID,Vidrala,1998-05-18,0.33
 VIS,Viscofan,1999-03-15,0.5
+ISUR,"Inmobiliaria del Sur",2006-07-31,0.2

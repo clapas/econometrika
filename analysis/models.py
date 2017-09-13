@@ -13,6 +13,12 @@ class KeyValue(models.Model):
     class Meta:
         unique_together = ('category', 'key')
 
+class Sector(models.Model):
+    name = models.CharField(max_length=64)
+    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
+    class Meta:
+        unique_together = ('name', 'parent')
+
 class Symbol(models.Model):
     ticker = models.CharField(max_length=8)
     name = models.CharField(max_length=64)
@@ -31,6 +37,8 @@ class Symbol(models.Model):
     )
     type = models.CharField(max_length=12, choices=SYMBOL_TYPE)
     adjusted_until = models.DateField(null=True)
+    isin = models.CharField(max_length=12, null=True)
+    sector = models.ForeignKey(Sector, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return "{0}: {1} -{2}-".format(self.ticker, self.name, self.market)
