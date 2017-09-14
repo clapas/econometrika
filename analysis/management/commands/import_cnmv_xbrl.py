@@ -16,7 +16,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('file', nargs='+', help='Specify the files to process (supported xbrl files, standalone or zipped).')
-        parser.add_argument('-p', '--process', action='store_true', help='Process the files and do post-processing, i.e. update of number of shares, as opposed to only post-processing (default).')
+        parser.add_argument('-p', '--process', action='store_true', help='Process the files.')
+        parser.add_argument('-pp', '--post-process', action='store_true', help='Do post-processing, i.e. extrapolate the number of shares.')
 
     def handle(self, *args, **options):
         symbol_ids = set()
@@ -45,7 +46,8 @@ class Command(BaseCommand):
                 else:
                     print('Unsupported file %s. Skipping...' % fname)
 
-        self.postprocess(symbol_ids)
+        if options['post_process']:
+            self.postprocess(symbol_ids)
 
     def postprocess(self, symbol_ids):
         if not len(symbol_ids) > 0:
