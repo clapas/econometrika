@@ -7,6 +7,7 @@ import locale
 import zipfile
 import os
 import csv
+import sys
 from django.db import transaction
 
 NSHARES_EQ_EPSILON = 0.2
@@ -48,6 +49,7 @@ class Command(BaseCommand):
 
         if options['post_process']:
             self.postprocess(symbol_ids)
+        sys.exit(min([len(options['file']) - len(symbol_ids), 127]))
 
     def postprocess(self, symbol_ids):
         if not len(symbol_ids) > 0:
