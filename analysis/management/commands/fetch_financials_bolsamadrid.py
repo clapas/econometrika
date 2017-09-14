@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db import connection
-from analysis.models import SymbolQuote, Symbol, Dividend, Split
+from analysis.models import SymbolQuote, Symbol, Dividend, Split, SymbolNShares
 from urllib.request import urlopen
 from lxml import html
 import locale
@@ -56,13 +56,46 @@ class Command(BaseCommand):
                     divd2 = last_dividends[symbol.isin]
                     if not divd['ex_date'] == divd2['ex_date'] or \
                         not divd['pay_date'] == divd2['pay_date']: continue # unlikely but possible mismatch
+                    print('    found new dividend, will have to retroadjust by %s' % m)
                     self.add_dividend(symbol, divd2)
-            spld = self.has_new_split(symbol, root)
+            spld = self.has_new_split(symbol, root) # forward splits
             if spld is not None:
                 print('    found new split on %s, with proportion %s' % (spld['date'], spld['proportion']))
-            spld = self.has_new_split(symbol, root, True)
+                self.add_split(symbol, spld)
+            spld = self.has_new_split(symbol, root, True) # reverse splits
             if spld is not None:
                 print('    found new reverse split on %s, with proportion %s' % (spld['date'], spld['proportion']))
+                self.add_split(symbol, spld)
+            print('    updating nshares...')
+            self.update_nshares(symbol, root)
+
+    def update_nshares(self, symbol, root):
+        tthh = root.findall('.//table[@id="ctl00_Contenido_tblCapital"]/thead/tr[1]/th') # header row with year
+        ttdd = root.findall('.//table[@id="ctl00_Contenido_tblCapital"]/tbody/tr[2]/td')
+        for i in range(len(tthh)):
+            try:
+                year = locale.atoi(tthh[i].text[0:4])
+                nshares = locale.atoi(ttdd[i].text) * 1000
+                now = datetime.datetime.now()
+                if year < now.year or now.month >= 7:
+                    d = datetime.date(year, 12, 31)
+                else:
+                    d = datetime.date(year, 6, 30)
+                try:
+                    sns = SymbolNShares.objects.get(symbol=symbol, date=d)
+                    if year == now.year:
+                        sns.n_shares = nshares
+                        sns.save()
+                except SymbolNShares.DoesNotExist:
+                    try:
+                        ref = SymbolNShares.objects.filter(symbol=symbol).order_by('-date')[0]
+                    except:
+                        ref = SymbolNShares(capital_share=1)
+                    sns = SymbolNShares(symbol=symbol, date=d, n_shares=nshares, capital_share=ref.capital_share)
+                    sns.save()
+            except Exception as e:
+                print(e)
+                continue
 
     def has_new_split(self, symbol, root, reverse=False):
         if reverse:
@@ -73,7 +106,7 @@ class Command(BaseCommand):
         try:
             d = datetime.datetime.strptime(ttdd[0].text, '%d/%m/%Y').date()
         except Exception as e:
-            print('    bad dates/not dividend; continuing...', e)
+            print('        bad dates/not a split; continuing...', e)
             return None
         splits = Split.objects.filter(symbol=symbol).extra(where=['abs(date - \'%s\'::date) < 10' % d])
         proparts = ttdd[1].text.split('x')
@@ -81,12 +114,22 @@ class Command(BaseCommand):
             den = locale.atoi(proparts[0])
             num = locale.atoi(proparts[1])
         except Exception as e:
-            print('    bad proportion', e)
+            print('        bad proportion', e)
             return None 
         if not len(splits) > 0:
             return {'date': d, 'proportion': num / den}
         else:
             return None
+
+    def add_split(self, symbol, spld):
+        with transaction.atomic():
+            print('        creating new split date: %s, proportion: %s' % (spld['date'], spld['proportion']))
+            Split(symbol=symbol, date=spld['date'], proportion=spld['proportion']).save()
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    'update analysis_symbolquote set open = open * m, high = high * m, low = low * m, close = close * m \
+                         from (select %s as m) mt \
+                         where symbol_id = %s and date < %s', [spld['proportion'], symbol.id, spld['date']])
 
     def has_new_dividend(self, symbol, root):
         ttdd = root.findall('.//table[@id="ctl00_Contenido_tblUltPago"]/tr[2]/td')
@@ -94,7 +137,7 @@ class Command(BaseCommand):
             ex_date = datetime.datetime.strptime(ttdd[1].text, '%d/%m/%Y').date()
             pay_date = datetime.datetime.strptime(ttdd[2].text, '%d/%m/%Y').date()
         except Exception as e:
-            print('    bad dates/not dividend', e)
+            print('        bad dates/not a dividend', e)
             return None
         divs = Dividend.objects.filter(symbol=symbol, ex_date=ex_date) | Dividend.objects.filter(symbol=symbol, pay_date=pay_date)
         if not len(divs) > 0:
@@ -107,7 +150,6 @@ class Command(BaseCommand):
     def add_dividend(self, symbol, divd):
         last_quote = SymbolQuote.objects.filter(symbol=symbol).order_by('-date')[0]
         m = round(last_quote.close / (last_quote.close + divd['gross']), 3)
-        print('    found new dividend, will have to retroadjust by %s' % m)
         with transaction.atomic():
             print('        creating new dividend ex_date: %s, gross: %s' % (divd['ex_date'], divd['gross']))
             Dividend(symbol=symbol, ex_date=divd['ex_date'], pay_date=divd['pay_date'], year=divd['year'],\
@@ -115,5 +157,5 @@ class Command(BaseCommand):
             with connection.cursor() as cursor:
                 cursor.execute(
                     'update analysis_symbolquote set open = open * m, high = high * m, low = low * m, close = close * m \
-                    from (select %s as m) mt \
-                    where symbol_id = %s and date < %s', [m, symbol.id, divd['ex_date']])
+                         from (select %s as m) mt \
+                         where symbol_id = %s and date < %s', [m, symbol.id, divd['ex_date']])
