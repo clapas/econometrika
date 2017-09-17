@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.db import transaction
 from analysis.models import FinancialConcept, FinancialContext, FinancialFact, Symbol
 from lxml import etree
+from datetime import datetime, timedelta
 import locale
 import zipfile
 import os
@@ -23,7 +24,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         symbol_ids = set()
         if options['process']:
-            for fname in sorted(reversed(options['file'])):
+            for fname in sorted(options['file']):
                 ticker = os.path.split(fname[:fname.find('-')])[1]
                 try:
                     symbol = Symbol.objects.get(ticker=ticker)
@@ -32,8 +33,8 @@ class Command(BaseCommand):
                     continue
                 if fname.endswith('.zip'):
                     z = zipfile.ZipFile(fname)
-                    for fzname in reversed(z.namelist()):
-                        print(fzname, end=' ')
+                    for fzname in sorted(z.namelist()):
+                        print(ticker, fzname, end=' ')
                         f = z.open(fzname)
                         self.do_import(f, symbol)
                         f.close()
@@ -88,12 +89,12 @@ class Command(BaseCommand):
                             changed_ctxs.append(ctx)
                         except Exception as e:
                             pass
-                self.contexts_bulk_save(changed_ctxs)
+                self.saveall(changed_ctxs)
 
     @transaction.atomic
-    def contexts_bulk_save(self, contexts):
-        for context in contexts:
-            context.save()
+    def saveall(self, objects):
+        for obj in objects:
+            obj.save()
 
     def do_import(self, f, symbol):
         context = iter(etree.iterparse(f, events=('start',), huge_tree=True))
@@ -176,16 +177,19 @@ class Command(BaseCommand):
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidadaLineaElementos' % ns
         bal_xbrl = '%s:BalanceConsolidadoLineaElementos' % ns
         finreports = [
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl,
-                'context': icc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl,
-                'context': dcc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl,
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl,
                 'context': ipac_ctx, 'n_shares': n_shares['previous'], 'period': 'previous'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl,
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl,
                 'context': dpc_ctx,'n_shares': n_shares['previous'], 'period': 'previous'},
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl,
+                'context': icc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl,
+                'context': dcc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
         ]
-        self.import_common(root, finreports, symbol)
+        dcur = datetime.strptime(icc_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
+        dprev = datetime.strptime(ipac_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
+        period = 'S1' if (dcur - dprev).days < 340 else 'S2'
+        self.import_common(root, finreports, symbol, period)
 
     @transaction.atomic
     def import_v2008(self, root, context, symbol):
@@ -241,12 +245,15 @@ class Command(BaseCommand):
         if n_shares_c is None or n_shares_c < 0: n_shares_c = n_shares_div
         if n_shares_p is None or n_shares_p < 0: n_shares_p = n_shares_div
         finreports = [
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares_p, 'period': 'previous'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'period': 'previous'},
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares_p, 'period': 'previous'},
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'period': 'previous'},
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
         ]
-        self.import_common(root, finreports, symbol)
+        dcur = datetime.strptime(icc_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
+        dprev = datetime.strptime(ipac_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
+        period = 'S1' if (dcur - dprev).days < 340 else 'S2'
+        self.import_common(root, finreports, symbol, period)
 
     @transaction.atomic
     def import_v2005(self, root, context, symbol):
@@ -282,15 +289,17 @@ class Command(BaseCommand):
         except (AttributeError, ZeroDivisionError):
             n_shares = None
         finreports = [
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares, 'period': 'current'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'period': 'current'},
-            {'type': 'balance sheet', 'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'period': 'previous'},
-            {'type': 'profit and loss', 'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'period': 'previous'},
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': ipc_ctx, 'n_shares': n_shares, 'period': 'previous'},
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dpc_ctx, 'n_shares': n_shares, 'period': 'previous'},
+            {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares, 'period': 'current'},
+            {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares, 'period': 'current'},
         ]
-        self.import_common(root, finreports, symbol)
+        self.import_common(root, finreports, symbol, icc_ctx.get('id')[0:2])
 
-    def import_common(self, root, finreports, symbol):
+    # 2S reports have always been rather FY reports so far! (e.g. 2004-2017)
+    def import_common(self, root, finreports, symbol, period):
         xbrl_ns = root.prefix
+        facts = []
         for finreport in finreports:
             try:
                 period_begin = period_end = finreport['context'].find('.//%s:instant' % xbrl_ns, root.nsmap).text
@@ -299,27 +308,56 @@ class Command(BaseCommand):
                 period_end = finreport['context'].find('.//%s:endDate' % xbrl_ns, root.nsmap).text
             print('    %s (%s - %s)' % (finreport['type'], period_begin, period_end))
             parent = FinancialConcept.objects.get(xbrl_element=finreport['parent_xbrl'])
-            try:
-                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol,
-                    report_type=finreport['type'])
-                if finreport['period'] == 'previous': # overwrite
-                    context.delete()
-                else:
-                    continue # the context already exists; do not overwrite
-            except FinancialContext.DoesNotExist:
-                pass
 
             if finreport['n_shares'] and finreport['n_shares'] > 0: nshares = finreport['n_shares']
             else: nshares = None
 
-            context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end,
-                symbol=symbol, n_shares_xbrl=nshares, n_shares_calc=nshares, report_type=finreport['type'])
-            print('        saving... (%s shares)' % nshares)
+            period_end = datetime.strptime(period_end, '%Y-%m-%d')
+            if period == 'Q1': year = (period_end - timedelta(days=90)).year
+            elif period == 'Q2' or period == 'S1': year = (period_end - timedelta(days=180)).year
+            elif period == 'Q3': year = (period_end - timedelta(days=270)).year
+            elif period == 'Q4' or period == 'S2' or period == 'FY': year = (period_end - timedelta(days=364)).year
+
+            reporting_year = year+1 if finreport['period'] == 'previous' else year
+            try:
+                context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol,
+                    report_type=finreport['type'], reporting_year=reporting_year)
+                continue # the context already exists; do nothing and continue with next context
+            except FinancialContext.DoesNotExist:
+                pass
+
+            unaccu_dict = {}
+            concepts = list(FinancialConcept.objects.filter(parent=parent))
+            nonaccunf = False
+            if period == 'S2' and finreport['type'] == FinancialContext.PROFIT_AND_LOSS:
+                try:
+                    unaccu_ctx = FinancialContext.objects.filter(year=year, period='S1', symbol=symbol, report_type=finreport['type']) \
+                        .order_by('-id')[0]
+                    unaccu_facts = FinancialFact.objects.filter(context=unaccu_ctx)
+                    unaccu_dict = {f.concept_id: f.amount for f in unaccu_facts}
+                    miss = 0
+                    for concept in concepts:
+                        if concept.id not in unaccu_dict:
+                            miss += 1
+                    if miss > len(concepts) / 2:
+                        period = 'FY'
+                        unaccu_dict = {}
+                        nonaccunf = True
+                except IndexError:
+                    nonaccunf = True
+                    period = 'FY'
+
+            if nonaccunf: print('        could not find previous non-cummulative S1 period for %s' % year)
+            context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end, period=period, year=year,
+                symbol=symbol, n_shares_xbrl=nshares, n_shares_calc=nshares, report_type=finreport['type'], reporting_year=reporting_year)
             context.save()
-            concepts = FinancialConcept.objects.filter(parent=parent)
             for concept in concepts:
                 fact = root.find('.//%s[@contextRef="%s"]' % (concept.xbrl_element, finreport['context'].get('id')), root.nsmap)
                 if fact is None:
                     continue
-                amount = fact.text
-                FinancialFact(amount=amount, concept=concept, context=context).save()
+                unaccu = unaccu_dict[concept.id] if concept.id in unaccu_dict else 0
+                amount = float(fact.text)
+                fact = FinancialFact(amount=amount - unaccu, concept=concept, context=context)
+                facts.append(fact)
+
+        self.saveall(facts)

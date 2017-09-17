@@ -147,8 +147,27 @@ class FinancialContext(models.Model):
     period_end = models.DateField()
     n_shares_xbrl = models.BigIntegerField(null=True)
     n_shares_calc = models.BigIntegerField(null=True)
+    year = models.IntegerField()
+    reporting_year = models.IntegerField()
+    Q1 = 'first quarter'
+    Q2 = 'second quarter'
+    Q3 = 'third quarter'
+    Q4 = 'fourth quarter'
+    S1 = 'first semester'
+    S2 = 'second semester'
+    FY = 'full year'
+    PERIOD = (
+        (Q1, 'First Quarter'),
+        (Q2, 'Second Quarter'),
+        (Q3, 'Third Quarter'),
+        (Q4, 'Fourth Quarter'),
+        (S1, 'First Semester'),
+        (S2, 'Second Semester'),
+        (FY, 'Full Year')
+    )
+    period = models.CharField(max_length=16, choices=PERIOD)
     class Meta:
-        unique_together = ('symbol', 'period_begin', 'period_end', 'report_type')
+        unique_together = ('symbol', 'period_begin', 'period_end', 'report_type', 'reporting_year')
 
 class SymbolNShares(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
