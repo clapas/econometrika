@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 from django.db import transaction
-from analysis.models import FinancialConcept, FinancialContext, FinancialFact, Symbol
+from analysis.models import FinancialConcept, FinancialContext, FinancialFact, Symbol, EmptyReportException
 from lxml import etree
 from datetime import datetime, timedelta
 import locale
@@ -128,8 +128,10 @@ class Command(BaseCommand):
             elif 'Ipre_PeriodoCierreAnteriorBalanceMiembro' in ctx.get('id'): ipac_ctx = ctx         # instant previous consolidated
             elif ctx.get('id').endswith('Dcur_AcumuladoActualMiembro'): dcc_ctx = ctx                # date-range current accu consolidated
             elif ctx.get('id').endswith('Dcur_AcumuladoActualMiembro_ImporteMiembro'): dcc_ctx = ctx # date-range current accu consolidated
-            elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro'): dpc_ctx = ctx              # date-range current accu consolidated
+            elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro'): dpc_ctx = ctx              # date-range previous accu consolidated
             elif ctx.get('id').endswith('Dpre_AcumuladoAnteriorMiembro_ImporteMiembro'): dpc_ctx = ctx # date-range cur accu consolidated
+            elif ctx.get('id').endswith('Dcur_PeriodoActualMiembro'): dnac_ctx = ctx                 # date-range current consolidated
+            elif ctx.get('id').endswith('Dpre_PeriodoAnteriorMiembro'): dnpc_ctx = ctx               # date-range previous consolidated
             elif ctx.get('id').endswith('Dcur_ImportePorAccionMiembro_PeriodoActualMiembro'): dsc_ctx = ctx # date-range cur per-share
             elif ctx.get('id').endswith('Dcur_PorcentajeSobreNominalMiembro_PeriodoActualMiembro'): dsc_pct_ctx = ctx # date-range cur per-share percent
             elif ctx.get('id').endswith('Dpre_ImportePorAccionMiembro_PeriodoAnteriorMiembro'): dsp_ctx = ctx # date-range prev per-share
@@ -176,15 +178,20 @@ class Command(BaseCommand):
 
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidadaLineaElementos' % ns
         bal_xbrl = '%s:BalanceConsolidadoLineaElementos' % ns
+        cf_xbrl = '%s:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos' % ns
         finreports = [
             {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl,
                 'context': ipac_ctx, 'n_shares': n_shares['previous'], 'period': 'previous'},
             {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl,
                 'context': dpc_ctx,'n_shares': n_shares['previous'], 'period': 'previous'},
+            {'type': FinancialContext.CASH_FLOW, 'parent_xbrl': cf_xbrl,
+                'context': dnpc_ctx,'n_shares': n_shares['previous'], 'period': 'previous'},
             {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl,
                 'context': icc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
             {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl,
                 'context': dcc_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
+            {'type': FinancialContext.CASH_FLOW, 'parent_xbrl': cf_xbrl,
+                'context': dnac_ctx, 'n_shares': n_shares['current'], 'period': 'current'},
         ]
         dcur = datetime.strptime(icc_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
         dprev = datetime.strptime(ipac_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
@@ -220,6 +227,7 @@ class Command(BaseCommand):
 
         p_and_l_xbrl = '%s:CuentaPerdidasGananciasConsolidada' % ns
         bal_xbrl = '%s:BalanceConsolidado' % ns
+        cf_xbrl = '%s:EstadoFlujosEfectivoConsolidadoMetodoIndirecto' % ns
         divs = root.findall('.//ipp-com:DividendosPagados', root.nsmap)
         n_shares_div = None
         # try to find out number of shares by two means: method #1 dividend_total / dividend_per_share
@@ -247,8 +255,10 @@ class Command(BaseCommand):
         finreports = [
             {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': ipac_ctx, 'n_shares': n_shares_p, 'period': 'previous'},
             {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'period': 'previous'},
+            {'type': FinancialContext.CASH_FLOW, 'parent_xbrl': cf_xbrl, 'context': dpac_ctx,'n_shares': n_shares_p, 'period': 'previous'},
             {'type': FinancialContext.BALANCE_SHEET, 'parent_xbrl': bal_xbrl, 'context': icc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
             {'type': FinancialContext.PROFIT_AND_LOSS, 'parent_xbrl': p_and_l_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
+            {'type': FinancialContext.CASH_FLOW, 'parent_xbrl': cf_xbrl, 'context': dcc_ctx, 'n_shares': n_shares_c, 'period': 'current'},
         ]
         dcur = datetime.strptime(icc_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
         dprev = datetime.strptime(ipac_ctx.find('.//xbrli:instant', root.nsmap).text, '%Y-%m-%d')
@@ -322,7 +332,9 @@ class Command(BaseCommand):
             try:
                 context = FinancialContext.objects.get(period_begin=period_begin, period_end=period_end, symbol=symbol,
                     report_type=finreport['type'], reporting_year=reporting_year)
-                continue # the context already exists; do nothing and continue with next context
+                if not context.financialfact_set.count() > 0:
+                    context.delete()
+                else: continue # the context already exists; do nothing and continue with next context
             except FinancialContext.DoesNotExist:
                 pass
 
@@ -348,16 +360,27 @@ class Command(BaseCommand):
                     period = 'FY'
 
             if nonaccunf: print('        could not find previous non-cummulative S1 period for %s' % year)
-            context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end, period=period, year=year,
-                symbol=symbol, n_shares_xbrl=nshares, n_shares_calc=nshares, report_type=finreport['type'], reporting_year=reporting_year)
-            context.save()
-            for concept in concepts:
-                fact = root.find('.//%s[@contextRef="%s"]' % (concept.xbrl_element, finreport['context'].get('id')), root.nsmap)
-                if fact is None:
-                    continue
-                unaccu = unaccu_dict[concept.id] if concept.id in unaccu_dict else 0
-                amount = float(fact.text)
-                fact = FinancialFact(amount=amount - unaccu, concept=concept, context=context)
-                facts.append(fact)
+            try:
+                with transaction.atomic():
+                    context = FinancialContext(currency='EUR', period_begin=period_begin, period_end=period_end, period=period, year=year,
+                        symbol=symbol, n_shares_xbrl=nshares, n_shares_calc=nshares, report_type=finreport['type'], reporting_year=reporting_year)
+                    context.save()
+                    all_zero = True
+                    new_facts = []
+                    for concept in concepts:
+                        fact = root.find('.//%s[@contextRef="%s"]' % (concept.xbrl_element, finreport['context'].get('id')), root.nsmap)
+                        if fact is None:
+                            continue
+                        unaccu = unaccu_dict[concept.id] if concept.id in unaccu_dict else 0
+                        amount = float(fact.text)
+                        if amount != 0: all_zero = False
+                        fact = FinancialFact(amount=amount - unaccu, concept=concept, context=context)
+                        new_facts.append(fact)
+                    if all_zero:
+                        raise EmptyReportException
+                    else:
+                        facts = facts + new_facts
+            except EmptyReportException:
+                continue
 
         self.saveall(facts)

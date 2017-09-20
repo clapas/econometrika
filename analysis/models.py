@@ -127,9 +127,10 @@ class FinancialConcept(models.Model):
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     class Meta:
         unique_together = (
-            ('taxonomy', 'name'),
-            ('taxonomy', 'xbrl_element'),
-            ('parent', 'xbrl_element'))
+            ('taxonomy', 'xbrl_element', 'parent'),)
+
+class EmptyReportException(Exception):
+    pass
 
 class FinancialContext(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
