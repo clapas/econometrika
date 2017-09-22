@@ -34,7 +34,10 @@ class Command(BaseCommand):
             vol = locale.atoi(ttdd[5].text)
             d = datetime.datetime.strptime(ttdd[7].text, '%d/%m/%Y').date()
             t = datetime.datetime.strptime(ttdd[8].text, '%H:%M').time()
-            ticker = self.ticker_mapping[name]
+            try:
+                ticker = self.ticker_mapping[name]
+            except KeyError: # new symbols eventually enter, e.g. right issues, etc
+                continue
             symbol = Symbol.objects.get(ticker=ticker)
             try:
                 quote = SymbolQuote.objects.get(symbol=symbol, date=d) # will update quote
