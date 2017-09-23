@@ -629,7 +629,349 @@ def insertData(apps, schema_editor):
         'name': 'TOTAL EFECTIVO Y EQUIVALENTES AL FINAL DEL PERIODO'
     }]
     root = FinancialConcept(name='Flujo de caja consolidado', xbrl_element='ipp_ge:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos',
-        taxonomy='http://www.cnmv.es/ipp-gen/2016')
+        taxonomy='http://www.cnmv.es/ipp-ge/2016')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'xbrl_element': 'ipp_en:I1800',
+        'name': 'A) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE EXPLOTACIÓN (1 + 2 + 3 + 4 + 5)'
+    }, { 
+        'xbrl_element': 'ipp_en:I1810',
+        'name': '1. Resultado del periodo'
+    }, { 
+        'xbrl_element': 'ipp_en:I1820',
+        'name': '2. Ajustes para obtener los flujos de efectivo de las actividades de explotación:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1821',
+        'name': ' Amortización'
+    }, { 
+        'xbrl_element': 'ipp_en:I1822',
+        'name': ' Otros ajustes'
+    }, { 
+        'xbrl_element': 'ipp_en:I1830',
+        'name': '3. Aumento/(disminución) neto de los activos de explotación:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1831',
+        'name': ' Activos financieros mantenidos para negociar '
+    }, { 
+        'xbrl_element': 'ipp_en:I1832',
+        'name': ' Activos financieros designados a valor razonable con cambios en resultados'
+    }, { 
+        'xbrl_element': 'ipp_en:I1833',
+        'name': ' Activos financieros disponibles para la venta'
+    }, { 
+        'xbrl_element': 'ipp_en:I1834',
+        'name': ' Préstamos y partidas a cobrar'
+    }, { 
+        'xbrl_element': 'ipp_en:I1835',
+        'name': ' Otros activos de explotación'
+    }, { 
+        'xbrl_element': 'ipp_en:I1840',
+        'name': '4. Aumento/(disminución) neto de los pasivos de explotación:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1841',
+        'name': ' Pasivos financieros mantenidos para negociar '
+    }, { 
+        'xbrl_element': 'ipp_en:I1842',
+        'name': ' Pasivos financieros designados a valor razonable con cambios en resultados'
+    }, { 
+        'xbrl_element': 'ipp_en:I1843',
+        'name': ' Pasivos financieros a coste amortizado '
+    }, { 
+        'xbrl_element': 'ipp_en:I1844',
+        'name': ' Otros pasivos de explotación'
+    }, { 
+        'xbrl_element': 'ipp_en:I1850',
+        'name': '5. Cobros/(Pagos) por impuesto sobre las ganancias'
+    }, { 
+        'xbrl_element': 'ipp_en:I1860',
+        'name': 'B) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE INVERSIÓN (1 + 2)'
+    }, { 
+        'xbrl_element': 'ipp_en:I1870',
+        'name': '1. Pagos:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1871',
+        'name': ' Activos tangibles'
+    }, { 
+        'xbrl_element': 'ipp_en:I1872',
+        'name': ' Activos intangibles'
+    }, { 
+        'xbrl_element': 'ipp_en:I1873',
+        'name': ' Inversiones en negocios conjuntos y asociadas'
+    }, { 
+        'xbrl_element': 'ipp_en:I1874',
+        'name': ' Entidades dependientes y otras unidades de negocio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1875',
+        'name': ' Activos no corrientes y pasivos que se han clasificado como mantenidos para la venta'
+    }, { 
+        'xbrl_element': 'ipp_en:I1876',
+        'name': ' Inversiones mantenidas hasta el vencimiento'
+    }, { 
+        'xbrl_element': 'ipp_en:I1877',
+        'name': ' Otros pagos relacionados con actividades de inversión'
+    }, { 
+        'xbrl_element': 'ipp_en:I1880',
+        'name': '2. Cobros:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1881',
+        'name': ' Activos tangibles'
+    }, { 
+        'xbrl_element': 'ipp_en:I1882',
+        'name': ' Activos intangibles'
+    }, { 
+        'xbrl_element': 'ipp_en:I1883',
+        'name': ' Inversiones en negocios conjuntos y asociadas'
+    }, { 
+        'xbrl_element': 'ipp_en:I1884',
+        'name': ' Entidades dependientes y otras unidades de negocio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1885',
+        'name': ' Activos no corrientes y pasivos que se han clasificado como mantenidos para la venta'
+    }, { 
+        'xbrl_element': 'ipp_en:I1886',
+        'name': ' Inversiones mantenidas hasta el vencimiento'
+    }, { 
+        'xbrl_element': 'ipp_en:I1887',
+        'name': ' Otros cobros relacionados con actividades de inversión'
+    }, { 
+        'xbrl_element': 'ipp_en:I1890',
+        'name': 'C) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE FINANCIACIÓN (1 + 2)'
+    }, { 
+        'xbrl_element': 'ipp_en:I1900',
+        'name': '1. Pagos:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1901',
+        'name': ' Dividendos'
+    }, { 
+        'xbrl_element': 'ipp_en:I1902',
+        'name': ' Pasivos subordinados'
+    }, { 
+        'xbrl_element': 'ipp_en:I1903',
+        'name': ' Amortización de instrumentos de patrimonio propio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1904',
+        'name': ' Adquisición de instrumentos de patrimonio propio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1905',
+        'name': ' Otros pagos relacionados con actividades de financiación'
+    }, { 
+        'xbrl_element': 'ipp_en:I1910',
+        'name': '2. Cobros:'
+    }, { 
+        'xbrl_element': 'ipp_en:I1911',
+        'name': ' Pasivos subordinados'
+    }, { 
+        'xbrl_element': 'ipp_en:I1912',
+        'name': ' Emisión de instrumentos de patrimonio propio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1913',
+        'name': ' Enajenación de instrumentos de patrimonio propio'
+    }, { 
+        'xbrl_element': 'ipp_en:I1914',
+        'name': ' Otros cobros relacionados con actividades de financiación'
+    }, { 
+        'xbrl_element': 'ipp_en:I1920',
+        'name': 'D) EFECTO DE LAS VARIACIONES DE LOS TIPOS DE CAMBIO '
+    }, { 
+        'xbrl_element': 'ipp_en:I1930',
+        'name': 'E) AUMENTO/(DISMINUCIÓN) NETO DEL EFECTIVO Y EQUIVALENTES (A + B + C + D)'
+    }, { 
+        'xbrl_element': 'ipp_en:I1940',
+        'name': 'F) EFECTIVO Y EQUIVALENTES AL INICIO DEL PERÍODO'
+    }, { 
+        'xbrl_element': 'ipp_en:I1950',
+        'name': 'G) EFECTIVO Y EQUIVALENTES AL FINAL DEL PERÍODO (E + F)'
+    }, { 
+        'xbrl_element': 'ipp_en:EstadoFlujosEfectivoConsolidadoMetodoIndirectoComponentesEfectivo',
+        'name': 'COMPONENTES DEL EFECTIVO Y EQUIVALENTES AL FINAL DEL PERIODO'
+    }, { 
+        'xbrl_element': 'ipp_en:I1955',
+        'name': ' Efectivo'
+    }, { 
+        'xbrl_element': 'ipp_en:I1960',
+        'name': ' Saldos equivalentes al efectivo en bancos centrales'
+    }, { 
+        'xbrl_element': 'ipp_en:I1965',
+        'name': ' Otros activos financieros '
+    }, { 
+        'xbrl_element': 'ipp_en:I1970',
+        'name': ' Menos: Descubiertos bancarios reintegrables a la vista'
+    }, { 
+        'xbrl_element': 'ipp_en:I1980',
+        'name': 'TOTAL EFECTIVO Y EQUIVALENTES AL FINAL DEL PERIODO'
+    }, { 
+        'xbrl_element': 'ipp_en:I1990',
+        'name': 'Del cual: en poder de entidades del grupo pero no disponible por el grupo'
+    }]
+    root = FinancialConcept(name='Flujo de caja consolidado', xbrl_element='ipp_en:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos',
+        taxonomy='http://www.cnmv.es/ipp-en/2016')
+    root.save()
+    root.parent = root
+    root.save()
+    for concept in concepts:
+        FinancialConcept(name=concept['name'], xbrl_element=concept['xbrl_element'], parent=root, taxonomy=root.taxonomy).save()
+
+    concepts = [{
+        'xbrl_element': 'ipp_se:I8435',
+        'name': 'A) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE EXPLOTACIÓN (1 + 2 + 3)'
+    }, {
+        'xbrl_element': 'ipp_se:I8405',
+        'name': '1. Actividad aseguradora:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8406',
+        'name': ' Cobros en efectivo de la actividad aseguradora'
+    }, { 
+        'xbrl_element': 'ipp_se:I8407',
+        'name': ' Pagos en efectivo de la actividad aseguradora'
+    }, { 
+        'xbrl_element': 'ipp_se:I8410',
+        'name': '2. Otras actividades de explotación:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8415',
+        'name': ' Cobros en efectivo de otras actividades de explotación'
+    }, { 
+        'xbrl_element': 'ipp_se:I8416',
+        'name': ' Pagos en efectivo de otras actividades de explotación'
+    }, { 
+        'xbrl_element': 'ipp_se:I8425',
+        'name': '3. Cobros/(pagos) por impuesto sobre beneficios'
+    }, { 
+        'xbrl_element': 'ipp_se:I8460',
+        'name': 'B) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE INVERSIÓN (1 + 2)'
+    }, { 
+        'xbrl_element': 'ipp_se:I8450',
+        'name': '1. Cobros de actividades de inversión:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8451',
+        'name': ' Inmovilizado material'
+    }, { 
+        'xbrl_element': 'ipp_se:I8452',
+        'name': ' Inversiones inmobiliarias'
+    }, { 
+        'xbrl_element': 'ipp_se:I8453',
+        'name': ' Inmovilizado intangible'
+    }, { 
+        'xbrl_element': 'ipp_se:I8454',
+        'name': ' Instrumentos financieros'
+    }, { 
+        'xbrl_element': 'ipp_se:I8455',
+        'name': ' Participaciones'
+    }, { 
+        'xbrl_element': 'ipp_se:I8457',
+        'name': ' Entidades dependientes y otras unidades de negocio'
+    }, { 
+        'xbrl_element': 'ipp_se:I8456',
+        'name': ' Intereses cobrados'
+    }, { 
+        'xbrl_element': 'ipp_se:I8459',
+        'name': ' Dividendos cobrados'
+    }, { 
+        'xbrl_element': 'ipp_se:I8458',
+        'name': ' Otros cobros relacionados con actividades de inversión'
+    }, { 
+        'xbrl_element': 'ipp_se:I8440',
+        'name': '2. Pagos de actividades de inversión:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8441',
+        'name': ' Inmovilizado material'
+    }, { 
+        'xbrl_element': 'ipp_se:I8442',
+        'name': ' Inversiones inmobiliarias'
+    }, { 
+        'xbrl_element': 'ipp_se:I8443',
+        'name': ' Inmovilizado intangible'
+    }, { 
+        'xbrl_element': 'ipp_se:I8444',
+        'name': ' Instrumentos financieros'
+    }, { 
+        'xbrl_element': 'ipp_se:I8445',
+        'name': ' Participaciones'
+    }, { 
+        'xbrl_element': 'ipp_se:I8447',
+        'name': ' Entidades dependientes y otras unidades de negocio'
+    }, { 
+        'xbrl_element': 'ipp_se:I8448',
+        'name': ' Otros pagos relacionados con actividades de inversión'
+    }, { 
+        'xbrl_element': 'ipp_se:I8490',
+        'name': 'C) FLUJOS DE EFECTIVO DE LAS ACTIVIDADES DE FINANCIACIÓN (1 + 2)'
+    }, { 
+        'xbrl_element': 'ipp_se:I8480',
+        'name': '1. Cobros de actividades de financiación:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8481',
+        'name': ' Pasivos subordinados'
+    }, { 
+        'xbrl_element': 'ipp_se:I8482',
+        'name': ' Cobros por emisión de instrumentos de patrimonio y ampliación de capital'
+    }, { 
+        'xbrl_element': 'ipp_se:I8483',
+        'name': ' Derramas activas y aportaciones de los socios o mutualistas'
+    }, { 
+        'xbrl_element': 'ipp_se:I8485',
+        'name': ' Enajenación de valores propios'
+    }, { 
+        'xbrl_element': 'ipp_se:I8486',
+        'name': ' Otros cobros relacionados con actividades de financiación'
+    }, { 
+        'xbrl_element': 'ipp_se:I8470',
+        'name': '2. Pagos de actividades de financiación:'
+    }, { 
+        'xbrl_element': 'ipp_se:I8471',
+        'name': ' Dividendos a los accionistas'
+    }, { 
+        'xbrl_element': 'ipp_se:I8475',
+        'name': ' Intereses pagados'
+    }, { 
+        'xbrl_element': 'ipp_se:I8472',
+        'name': ' Pasivos subordinados'
+    }, { 
+        'xbrl_element': 'ipp_se:I8473',
+        'name': ' Pagos por devolución de aportaciones a los accionistas'
+    }, { 
+        'xbrl_element': 'ipp_se:I8474',
+        'name': ' Derramas pasivas y devolución de aportaciones a los socios o mutualistas'
+    }, { 
+        'xbrl_element': 'ipp_se:I8477',
+        'name': ' Adquisición de valores propios'
+    }, { 
+        'xbrl_element': 'ipp_se:I8478',
+        'name': ' Otros pagos relacionados con actividades de financiación'
+    }, { 
+        'xbrl_element': 'ipp_se:I8492',
+        'name': 'D) EFECTO DE LAS VARIACIONES DE LOS TIPOS DE CAMBIO'
+    }, { 
+        'xbrl_element': 'ipp_se:I8495',
+        'name': 'E) AUMENTO/(DISMINUCIÓN) NETO DE EFECTIVO Y EQUIVALENTES (A + B + C + D)'
+    }, { 
+        'xbrl_element': 'ipp_se:I8499',
+        'name': 'F) EFECTIVO Y EQUIVALENTES AL INICIO DEL PERÍODO'
+    }, { 
+        'xbrl_element': 'ipp_se:I8500',
+        'name': 'G) EFECTIVO Y EQUIVALENTES AL FINAL DEL PERÍODO (E + F)'
+    }, { 
+        'xbrl_element': 'ipp_se:EstadoFlujosEfectivoConsolidadoMetodoDirectoComponentesEfectivo',
+        'name': 'COMPONENTES DEL EFECTIVO Y EQUIVALENTES AL FINAL DEL PERIODO'
+    }, { 
+        'xbrl_element': 'ipp_se:I8550',
+        'name': ' Caja y bancos'
+    }, { 
+        'xbrl_element': 'ipp_se:I8552',
+        'name': ' Otros activos financieros'
+    }, { 
+        'xbrl_element': 'ipp_se:I8553',
+        'name': ' Menos: Descubiertos bancarios reintegrables a la vista'
+    }, { 
+        'xbrl_element': 'ipp_se:I8600',
+        'name': 'TOTAL EFECTIVO Y EQUIVALENTES DE EFECTIVO AL FINAL DEL PERIODO'
+    }]
+    root = FinancialConcept(name='Flujo de caja consolidado', xbrl_element='ipp_se:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos',
+        taxonomy='http://www.cnmv.es/ipp-en/2016')
     root.save()
     root.parent = root
     root.save()
@@ -650,6 +992,14 @@ def rollback(apps, schema_editor):
     root.delete()
 
     root = FinancialConcept.objects.get(xbrl_element='ipp_ge:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos')
+    FinancialConcept.objects.filter(parent=root).delete()
+    root.delete()
+
+    root = FinancialConcept.objects.get(xbrl_element='ipp_en:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos')
+    FinancialConcept.objects.filter(parent=root).delete()
+    root.delete()
+
+    root = FinancialConcept.objects.get(xbrl_element='ipp_se:EstadoFlujosEfectivoConsolidadoMetodoIndirectoLineaElementos')
     FinancialConcept.objects.filter(parent=root).delete()
     root.delete()
 
